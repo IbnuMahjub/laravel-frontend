@@ -17,6 +17,9 @@
   <link href="{{ asset('vertical/assets/plugins/metismenu/mm-vertical.css') }}" rel="stylesheet">
   <link href="{{ asset('vertical/assets/plugins/simplebar/css/simplebar.css') }}" rel="stylesheet">
 
+  <!-- SweetAlert CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.19/dist/sweetalert2.min.css" rel="stylesheet">
+
   <!--bootstrap css-->
   <link href="{{ asset('vertical/assets/css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="{{ asset('vertical/assets/plugins/datatable/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
@@ -121,6 +124,9 @@
 
   <!-- Load Bootstrap JS -->
   <script src="{{ asset('vertical/assets/js/bootstrap.bundle.min.js') }}"></script>
+
+  <!-- SweetAlert JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.19/dist/sweetalert2.min.js"></script>
 
   <!--plugins-->
   <script src="{{ asset('vertical/assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js') }}"></script>

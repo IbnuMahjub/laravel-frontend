@@ -1,8 +1,6 @@
 @extends('dashboard.layouts.main')
 @section('content')
 
-
-
 <div class="mb-3">
   <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#categoryModal" id="createCategoryBtn">
      Add Product
@@ -48,7 +46,7 @@
   </div>
 </div>
 
-<!-- Modal -->
+{{-- Modal --}}
 <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -82,14 +80,12 @@
   $(document).ready(function() {
     var table = $('#example').DataTable();
 
-    // Event listener untuk klik tombol simpan
     $('#saveCategoryBtn').on('click', function() {
       var name = $('#name').val();
       var slug = $('#slug').val();
 
-      // Kirim data ke backend menggunakan AJAX
       $.ajax({
-        url: '{{ route("category.store") }}', // Arahkan ke route store
+        url: '{{ route("category.store") }}',
         type: 'POST',
         data: {
           _token: '{{ csrf_token() }}',
@@ -106,15 +102,33 @@
               '<button class="btn btn-danger btn-sm">Delete</button>'
             ]).draw();  
 
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Category has been added successfully.',
+                confirmButtonText: 'OK'
+            });
+
             $('#categoryModal').modal('hide');
             $('#categoryForm')[0].reset();
           } else {
-            alert(response.message); 
+            alert(response.message);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong. Please try again!',
+                confirmButtonText: 'OK'
+            }); 
           }
         },
         error: function(xhr, status, error) {
             console.log(xhr.responseText); 
-            alert('Failed to add category. Please try again!');
+            Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'Failed to add category. Please try again later.',
+            confirmButtonText: 'OK'
+        });
         }
       });
     });

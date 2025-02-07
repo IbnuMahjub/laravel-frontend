@@ -102,8 +102,32 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // Validasi input dari request
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'slug' => 'required|string',
+        ]);
+
+        $token = session('token');
+        $url = env('API_URL') . '/api/category/' . $id;
+
+        $response = Http::withToken($token)->put($url, [
+            'name' => $validated['name'],
+            'slug' => $validated['slug'],
+        ]);
+        if ($response->successful()) {
+            return response()->json([
+                'success' => true,
+                'category' => $response->json(),
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update category',
+            ]);
+        }
     }
+
 
     /**
      * Remove the specified resource from storage.
