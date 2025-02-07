@@ -22,7 +22,8 @@ class LoginController extends Controller
             'password' => 'required|string',
         ]);
 
-        $response = Http::post('http://127.0.0.1:3000/api/login', [
+        $url = env('API_URL') . '/api/login';
+        $response = Http::post($url, [
             'email' => $validated['email'],
             'password' => $validated['password'],
         ]);

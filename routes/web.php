@@ -38,5 +38,6 @@ Route::post('/api/logout', [LoginController::class, 'logout']);
 //     return view('dashboard.index');
 // });
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-Route::resource('/categories', CategoryController::class);
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('check.token');
+Route::resource('/category', CategoryController::class)->middleware('check.token');
+Route::post('/category', [CategoryController::class, 'store'])->name('category.store');

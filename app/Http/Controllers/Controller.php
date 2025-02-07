@@ -9,4 +9,9 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
+    public function generateBreadcrumb($breadcrumbs, $breadcrumbTitle)
+    {
+        view()->share('breadcrumbs', $breadcrumbs);
+        view()->share('breadcrumbTitle', $breadcrumbTitle);
+    }
 }
