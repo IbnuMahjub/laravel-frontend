@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PropertyController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,3 +41,8 @@ Route::post('/api/logout', [LoginController::class, 'logout']);
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('check.token');
 Route::resource('/category', CategoryController::class)->middleware('check.token');
+
+Route::get('/property', [PropertyController::class, 'index'])->name('property.index')->middleware('check.token');
+Route::post('/property', [PropertyController::class, 'storeProperty'])->name('property.store')->middleware('check.token');
+Route::get('/property/{id}', [PropertyController::class, 'showProperty'])->name('property.show')->middleware('check.token');
+Route::get('/unit', [PropertyController::class, 'getUnit'])->name('property.unit');

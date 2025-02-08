@@ -2,8 +2,8 @@
 @section('content')
 
 <div class="mb-3">
-  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#categoryModal" id="createCategoryBtn">
-     Add Category
+  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#propertyModal" id="createPropertyBtn">
+     Add Property
   </button>
 </div>
 
@@ -13,23 +13,26 @@
         <table id="example" class="table table-bordered" style="width:100%">
            <thead>
               <tr>
-                 <th>Name</th>
-                 <th>Slug</th>
+                 <th>Name Property</th>
+                 <th>Category</th>
+                 <th>gambar</th>
                  <th>Action</th>
               </tr>
            </thead>
            <tbody>
-              @foreach ($categories as $item)
-              <tr id="category-{{ $item['id'] }}">
+              @foreach ($properties as $item)
+              <tr id="property-{{ $item['id'] }}">
                  <td>{{ $item['name'] }}</td>
-                 <td>{{ $item['slug'] }}</td>
+                 <td>{{ $item['category'] }}</td>
+                 {{-- <td>{{ $item['alamat'] }}</td> --}}
+                 <td>
+                  <img src="{{ $item['image'] }}" alt="" width="100">
+                </td>
                  <td class="d-flex">
-                  {{-- Edit Button --}}
                   <a href="javascript:void(0)" class="btn btn-warning btn-sm me-2" onclick="editCategory({{ $item['id']}})">
                     <span data-feather="edit"></span> Edit
                   </a>
                   
-                  {{-- Delete Button --}}
                     <button type="submit" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $item['id'] }})">
                       <span data-feather="x-circle"></span> Hapus
                     </button>
@@ -42,30 +45,42 @@
   </div>
 </div>
 
-{{-- Add Category Modal --}}
-<div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
+{{-- Add Property Modal --}}
+<div class="modal fade" id="propertyModal" tabindex="-1" aria-labelledby="propertyModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="categoryModalLabel">Add Category</h5>
+        <h5 class="modal-title" id="propertyModalLabel">Add Property</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="categoryForm">
+        <form id="propertyForm">
           @csrf
           <div class="mb-3">
-            <label for="name" class="form-label">Name</label>
+            <label for="name" class="form-label">Name Property</label>
             <input type="text" class="form-control" id="name" name="name">
           </div>
           <div class="mb-3">
-            <label for="slug" class="form-label">Slug</label>
-            <input type="text" class="form-control" id="slug" name="slug">
+            <label for="category_id" class="form-label">Category</label>
+            <select class="form-control" id="category_id" name="category_id">
+              @foreach ($categories as $category)
+                <option value="{{ $category['id'] }}">{{ $category['name'] }}</option>
+              @endforeach
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="alamat" class="form-label">Alamat</label>
+            <input type="text" class="form-control" id="alamat" name="alamat">
+          </div>
+          <div class="mb-3">
+            <label for="image" class="form-label">Image</label>
+            <input type="file" class="form-control" id="image" name="image">
           </div>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="saveCategoryBtn">Save Category</button>
+        <button type="button" class="btn btn-primary" id="savePropertyBtn">Save Category</button>
       </div>
     </div>
   </div>
@@ -107,58 +122,73 @@
 
 @section('scripts')
 <script>
+
+$.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
+
   $(document).ready(function() {
     var table = $('#example').DataTable();
 
-    $('#saveCategoryBtn').on('click', function() {
-      var name = $('#name').val();
-      var slug = $('#slug').val();
-
+    $('#savePropertyBtn').on('click', function() {
+      var formData = new FormData();
+      formData.append('name', $('#name').val());
+      formData.append('category_id', $('#category_id').val());
+      formData.append('alamat', $('#alamat').val());
+      formData.append('image', $('#image')[0].files[0]);  // Menambahkan file image
+      
       $.ajax({
-        url: '{{ route("category.store") }}',
-        type: 'POST',
-        data: {
-          _token: '{{ csrf_token() }}',
-          name: name,
-          slug: slug
-        },
-        success: function(response) {
-          if (response.success) {
-            table.row.add([
-              response.category.name,  
-              response.category.slug, 
-              '<a href="javascript:void(0)" class="btn btn-warning btn-sm me-2" onclick="editCategory(' + response.category.id + ')">Edit</a>' +
-              '<button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(' + response.category.id + ')">Delete</button>'
-            ]).draw();  
+      url: '{{ route("property.store") }}',
+      type: 'POST',
+      _token: '{{ csrf_token() }}',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response) {
+        console.log(response);
+        if (response.success) {
+          // Jika respons sukses, lanjutkan
+          table.row.add([
+            response.property.name,
+            response.property.category.name,
+            response.property.alamat,
+            '<a href="javascript:void(0)" class="btn btn-warning btn-sm me-2" onclick="editCategory(' + response.property.id + ')">Edit</a>' +
+            '<button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(' + response.property.id + ')">Delete</button>'
+          ]).draw();
 
-            Swal.fire({
+          Swal.fire({
                 icon: 'success',
                 title: 'Success!',
-                text: 'Category has been added successfully.',
+                text: 'Property has been added successfully.',
                 confirmButtonText: 'OK'
             });
 
-            $('#categoryModal').modal('hide');
-            $('#categoryForm')[0].reset();
-          } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Something went wrong. Please try again!',
-                confirmButtonText: 'OK'
-            }); 
-          }
-        },
-        error: function(xhr, status, error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'Failed to add category. Please try again later.',
-                confirmButtonText: 'OK'
-            });
+            $('#propertyModal').modal('hide');
+            $('#propertyForm')[0].reset();
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: response.message || 'Something went wrong. Please try again!',
+            confirmButtonText: 'OK'
+          });
         }
-      });
+      },
+      error: function(xhr, status, error) {
+        console.error(xhr.responseText); // Menampilkan detail error
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Failed to add property. Please try again later.',
+          confirmButtonText: 'OK'
+        });
+      }
     });
+
+    });
+
 
     // Edit Category
     window.editCategory = function(id) {

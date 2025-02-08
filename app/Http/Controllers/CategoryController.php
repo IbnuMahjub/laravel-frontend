@@ -15,14 +15,15 @@ class CategoryController extends Controller
         $breadcrumbTitle = 'Category';
         $breadcrumbs = [
             ['title' => 'Data Category', 'url' => '/category'],
-            ['title' => 'List', 'url' => '/sda'],
-            ['title' => 'List', 'url' => 'javascript:;'],
+            ['title' => 'Property', 'url' => '/property'],
         ];
         $this->generateBreadcrumb($breadcrumbs, $breadcrumbTitle);
 
         $token = session('token');
         $url = env('API_URL') . '/api/category';
+
         $response = Http::withToken($token)->get($url);
+
         // dd($response->json());
         if ($response->successful()) {
             return view('dashboard.category.index', [
@@ -94,15 +95,30 @@ class CategoryController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $token = session('token');
+        $url = env('API_URL') . '/api/category/' . $id;
+
+        $response = Http::withToken($token)->get($url);
+
+        if ($response->successful()) {
+            return response()->json([
+                'success' => true,
+                'category' => $response->json(),
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch category data',
+            ]);
+        }
     }
+
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-        // Validasi input dari request
         $validated = $request->validate([
             'name' => 'required|string',
             'slug' => 'required|string',
@@ -115,6 +131,7 @@ class CategoryController extends Controller
             'name' => $validated['name'],
             'slug' => $validated['slug'],
         ]);
+
         if ($response->successful()) {
             return response()->json([
                 'success' => true,
@@ -129,11 +146,30 @@ class CategoryController extends Controller
     }
 
 
+
+    /**
+     * Remove the specified resource from storage.
+     */
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        //
+        $token = session('token');
+        $url = env('API_URL') . '/api/category/' . $id;
+
+        $response = Http::withToken($token)->delete($url);
+
+        if ($response->successful()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Category deleted successfully.',
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete category.',
+            ]);
+        }
     }
 }

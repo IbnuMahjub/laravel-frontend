@@ -5,6 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Kampoeng villa | {{ $title }}</title>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+
   <!--favicon-->
   <link rel="icon" href="{{ asset('vertical/assets/images/stars.jpeg') }}" type="image/png">
   <!-- loader-->
@@ -22,7 +24,8 @@
 
   <!--bootstrap css-->
   <link href="{{ asset('vertical/assets/css/bootstrap.min.css') }}" rel="stylesheet">
-  <link href="{{ asset('vertical/assets/plugins/datatable/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.bootstrap5.css">
+  {{-- <link href="{{ asset('vertical/assets/plugins/datatable/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" /> --}}
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Material+Icons+Outlined" rel="stylesheet">
   <!--main css-->
@@ -39,24 +42,7 @@
         display: none;
     } */
 
-    table.dataTable {
-      border-collapse: collapse !important;
-    }
-
-    table.dataTable th, table.dataTable td {
-      border: 1px solid #dee2e6 !important;
-    }
-
-    table.dataTable thead th {
-      background-color: #86bdee;
-    }
-
-    /* Responsif untuk DataTable */
-    @media (max-width: 767px) {
-      .dataTables_wrapper {
-        padding: 0 !important;
-      }
-    }
+   
   </style>
 
 </head>
@@ -120,7 +106,8 @@
   <!--end overlay-->
 
   <!-- Load jQuery First -->
-  <script src="{{ asset('vertical/assets/js/jquery.min.js') }}"></script>
+  {{-- <script src="{{ asset('vertical/assets/js/jquery.min.js') }}"></script> --}}
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 
   <!-- Load Bootstrap JS -->
   <script src="{{ asset('vertical/assets/js/bootstrap.bundle.min.js') }}"></script>
@@ -133,7 +120,7 @@
   <script src="{{ asset('vertical/assets/plugins/metismenu/metisMenu.min.js') }}"></script>
   <script src="{{ asset('vertical/assets/plugins/apexchart/apexcharts.min.js') }}"></script>
   <script src="{{ asset('vertical/assets/plugins/simplebar/js/simplebar.min.js') }}"></script>
-  <script src="{{ asset('vertical/assets/plugins/peity/jquery.peity.min.js') }}"></script>
+  {{-- <script src="{{ asset('vertical/assets/plugins/peity/jquery.peity.min.js') }}"></script> --}}
   <script>
     $(".data-attributes span").peity("donut")
   </script>
@@ -143,9 +130,10 @@
   </script>
 
   <!-- DataTables Scripts -->
-  <script src="{{ asset('vertical/assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
-  <script src="{{ asset('vertical/assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
-  
+  {{-- <script src="{{ asset('vertical/assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
+  <script src="{{ asset('vertical/assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script> --}}
+  <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+  <script src="https://cdn.datatables.net/2.2.2/js/dataTables.bootstrap5.js"></script>
 
   <!-- Custom Scripts for Modal -->
   @yield('scripts')

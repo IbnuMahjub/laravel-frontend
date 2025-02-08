@@ -3,7 +3,7 @@
 
 <div class="mb-3">
   <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#categoryModal" id="createCategoryBtn">
-     Add Category
+     Add unit
   </button>
 </div>
 
@@ -18,25 +18,23 @@
                  <th>Action</th>
               </tr>
            </thead>
-           <tbody>
+           {{-- <tbody>
               @foreach ($categories as $item)
               <tr id="category-{{ $item['id'] }}">
                  <td>{{ $item['name'] }}</td>
                  <td>{{ $item['slug'] }}</td>
                  <td class="d-flex">
-                  {{-- Edit Button --}}
                   <a href="javascript:void(0)" class="btn btn-warning btn-sm me-2" onclick="editCategory({{ $item['id']}})">
                     <span data-feather="edit"></span> Edit
                   </a>
                   
-                  {{-- Delete Button --}}
                     <button type="submit" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $item['id'] }})">
                       <span data-feather="x-circle"></span> Hapus
                     </button>
                 </td>
               </tr>
               @endforeach
-           </tbody>
+           </tbody> --}}
         </table>
      </div>
   </div>

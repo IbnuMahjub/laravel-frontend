@@ -21,12 +21,20 @@
           </a>
         </li>
         <li class="menu-label">UI Elements</li>
-        <li class="{{ Request::is('dashboard/category') ? 'active' : '' }}">
-          <a href="/category">
-            <div class="parent-icon"><i class="material-icons-outlined">inventory_2</i>
+        <li>
+          <a href="javascript:;" class="has-arrow">
+            <div class="parent-icon"><i class="material-icons-outlined">description</i>
             </div>
-            <div class="menu-title">Cards</div>
+            <div class="menu-title">Master Data</div>
           </a>
+          <ul>
+            <li><a href="/category"><i class="material-icons-outlined">category</i>Category</a>
+            </li>
+            <li><a href="/property"><i class="material-icons-outlined">room_preferences</i>Property</a>
+            </li>
+            <li><a href="/unit"><i class="material-icons-outlined">bed</i>Unit</a>
+            </li>
+          </ul>     
         </li>
        </ul>
       <!--end navigation-->
