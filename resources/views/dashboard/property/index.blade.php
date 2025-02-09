@@ -23,13 +23,13 @@
               @foreach ($properties as $item)
               <tr id="property-{{ $item['id'] }}">
                  <td>{{ $item['name'] }}</td>
-                 <td>{{ $item['category'] }}</td>
+                 <td>{{ $item['category']['name'] }}</td>
                  {{-- <td>{{ $item['alamat'] }}</td> --}}
                  <td>
                   <img src="{{ $item['image'] }}" alt="" width="100">
                 </td>
                  <td class="d-flex">
-                  <a href="javascript:void(0)" class="btn btn-warning btn-sm me-2" onclick="editCategory({{ $item['id']}})">
+                  <a href="javascript:void(0)" class="btn btn-warning btn-sm me-2" onclick="editProperty({{ $item['id']}})">
                     <span data-feather="edit"></span> Edit
                   </a>
                   
@@ -86,33 +86,47 @@
   </div>
 </div>
 
-{{-- Edit Category Modal --}}
-<div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+{{-- Edit Property Modal --}}
+<div class="modal fade" id="editPropertyModal" tabindex="-1" aria-labelledby="editPropertyModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header bg-warning text-white">
-        <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
+        <h5 class="modal-title" id="editPropertyModalLabel">Edit Property</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="editCategoryForm" method="POST"> <!-- Method tetap POST -->
+        <form id="editPropertyForm" method="POST">
           @csrf
           <input type="hidden" name="_method" value="PUT"> 
-          <input type="hidden" name="id" id="edit_category_id">
+          <input type="hidden" name="id" id="edit_property_id">
 
           <div class="mb-3">
             <label for="edit_name" class="form-label">Name</label>
             <input type="text" class="form-control" id="edit_name" name="name">
           </div>
+        
+          <div class="mb-3">
+            <label for="edit_category" class="form-label">Category</label>
+            <select class="form-control" id="edit_category" name="category_id">
+              <!-- Kategori akan diisi oleh JavaScript -->
+            </select>
+          </div>
 
           <div class="mb-3">
-            <label for="edit_slug" class="form-label">Slug</label>
-            <input type="text" class="form-control" id="edit_slug" name="slug">
+            <label for="edit_image" class="form-label">Property Image</label>
+            <img id="edit_image" class="img-fluid" src="" width="100" alt="Property Image" />
           </div>
+          
+
+          <div class="mb-3">
+            <label for="edit_alamat" class="form-label">edit_alamat</label>
+            <textarea name="edit_alamat" id="edit_alamat" class="form-control" cols="20" rows="5"></textarea>
+          </div>
+          
 
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-warning">Update Category</button>
+            <button type="submit" class="btn btn-warning">Update Porperty</button>
           </div>
         </form>
       </div>
@@ -137,7 +151,7 @@ $.ajaxSetup({
       formData.append('name', $('#name').val());
       formData.append('category_id', $('#category_id').val());
       formData.append('alamat', $('#alamat').val());
-      formData.append('image', $('#image')[0].files[0]);  // Menambahkan file image
+      formData.append('image', $('#image')[0].files[0]);  
       
       $.ajax({
       url: '{{ route("property.store") }}',
@@ -149,7 +163,6 @@ $.ajaxSetup({
       success: function(response) {
         console.log(response);
         if (response.success) {
-          // Jika respons sukses, lanjutkan
           table.row.add([
             response.property.name,
             response.property.category.name,
@@ -177,7 +190,7 @@ $.ajaxSetup({
         }
       },
       error: function(xhr, status, error) {
-        console.error(xhr.responseText); // Menampilkan detail error
+        console.error(xhr.responseText); 
         Swal.fire({
           icon: 'error',
           title: 'Error!',
@@ -189,45 +202,58 @@ $.ajaxSetup({
 
     });
 
-
-    // Edit Category
-    window.editCategory = function(id) {
-      $.ajax({
-        url: '/category/' + id + '/edit', 
+    // edit Property
+    window.editProperty = function(id) {
+    $.ajax({
+        url: '/property/' + id + '/edit', 
         type: 'GET',
         success: function(response) {
-          if (response.success) {
-            $('#edit_category_id').val(response.category.id);
-            $('#edit_name').val(response.category.name);
-            $('#edit_slug').val(response.category.slug);
-            $('#editCategoryModal').modal('show');
-          } else {
+          console.log(response);
+            if (response.success) {
+              
+                $('#edit_property_id').val(response.property.id);
+                $('#edit_name').val(response.property.name);
+                $('#edit_alamat').val(response.property.alamat);
+                $('#edit_image').attr('src', response.property.image);
+                $('#edit_category').empty();
+
+                response.categories.forEach(function(category) {
+                    var selected = category.id == response.property.category.id ? 'selected' : '';
+                    $('#edit_category').append(
+                        '<option value="' + category.id + '" ' + selected + '>' + category.name + '</option>'
+                    );
+                });
+
+                $('#editPropertyModal').modal('show');
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Failed to fetch Property details.',
+                });
+            }
+        },
+        error: function() {
             Swal.fire({
                 icon: 'error',
                 title: 'Error!',
-                text: 'Failed to fetch category details.',
+                text: 'An error occurred while fetching category details.',
             });
-          }
-        },
-        error: function() {
-          Swal.fire({
-              icon: 'error',
-              title: 'Error!',
-              text: 'An error occurred while fetching category details.',
-          });
         }
-      });
-    };
+    });
+};
 
-    // Update Category
-    $('#editCategoryForm').on('submit', function(e) {
+
+
+    // Update Property
+    $('#editPropertyForm').on('submit', function(e) {
     e.preventDefault();
-    var id = $('#edit_category_id').val();
+    var id = $('#edit_property_id').val();
     var name = $('#edit_name').val();
     var slug = $('#edit_slug').val();
 
     $.ajax({
-      url: '/category/' + id,
+      url: '/property/' + id,
       type: 'PUT',
       data: {
         _token: '{{ csrf_token() }}',
@@ -236,8 +262,7 @@ $.ajaxSetup({
       },
       success: function(response) {
         if (response.success) {
-          // Temukan <tr> yang sesuai dengan ID kategori yang telah diperbarui
-          var row = $('#category-' + id); // gunakan id kategori sebagai identifier
+          var row = $('#category-' + id); 
 
         // Update data dalam <tr>
           row.find('td').eq(0).text(response.category.name); // Update name
@@ -287,7 +312,6 @@ $.ajaxSetup({
     confirmButtonText: 'Yes, delete it!'
   }).then((result) => {
     if (result.isConfirmed) {
-      // Send delete request via AJAX
       $.ajax({
         url: '/category/' + id,  // URL API untuk delete
         type: 'DELETE',

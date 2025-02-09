@@ -93,4 +93,26 @@ class PropertyController extends Controller
             ]);
         }
     }
+    public function editProperty(string $id)
+    {
+        $token = session('token');
+        $url = env('API_URL') . '/api/property/' . $id;
+        $urlCategory = env('API_URL') . '/api/category';
+
+        $category_id = Http::withToken($token)->get($urlCategory);
+        $response = Http::withToken($token)->get($url);
+
+        if ($response->successful() && $category_id->successful()) {
+            return response()->json([
+                'success' => true,
+                'categories' => $category_id->json(),
+                'property' => $response->json()['data'],
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch property or category data',
+            ]);
+        }
+    }
 }
