@@ -22,7 +22,7 @@ class PropertyController extends Controller
         $urlCategory = env('API_URL') . '/api/category';
         $response = Http::withToken($token)->get($url);
         $category_id = Http::withToken($token)->get($urlCategory);
-        // dd($response->json()['data']);
+        dd($response->json());
         // dd($category_id->json());
         if ($response->successful()) {
             return view('dashboard.property.index', [
@@ -82,6 +82,7 @@ class PropertyController extends Controller
         Log::info('API Response:', $response->json());
 
         if ($response->successful()) {
+            Log::info('API Response Successful', $response->json()['data']);
             return response()->json([
                 'success' => true,
                 'property' => $response->json()['data'],
@@ -93,25 +94,88 @@ class PropertyController extends Controller
             ]);
         }
     }
-    public function editProperty(string $id)
+
+    public function editProperty($id)
     {
         $token = session('token');
         $url = env('API_URL') . '/api/property/' . $id;
         $urlCategory = env('API_URL') . '/api/category';
-
-        $category_id = Http::withToken($token)->get($urlCategory);
         $response = Http::withToken($token)->get($url);
+        $category_id = Http::withToken($token)->get($urlCategory);
 
-        if ($response->successful() && $category_id->successful()) {
+        if ($response->successful()) {
             return response()->json([
                 'success' => true,
+                'property' => $response->json()['data'],
                 'categories' => $category_id->json(),
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch property data',
+            ]);
+        }
+    }
+
+    public function updateProperty(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'alamat' => 'required|string',
+            'category_id' => 'required|integer',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $token = session('token');
+        $url = env('API_URL') . '/api/property/' . $id;
+
+        $data = [
+            'name' => $validated['name'],
+            'alamat' => $validated['alamat'],
+            'category_id' => $validated['category_id'],
+            '_method' => 'PUT',
+        ];
+
+        Log::info('Data:', $data);
+        if ($request->hasFile('image')) {
+            $response = Http::withToken($token)
+                ->attach('image', fopen($request->file('image')->getRealPath(), 'r'), $request->file('image')->getClientOriginalName())
+                ->post($url, $data);
+        } else {
+            $response = Http::withToken($token)->put($url, $data);
+        }
+
+        Log::info('API Response:', $response->json());
+
+        if ($response->successful()) {
+            return response()->json([
+                'success' => true,
                 'property' => $response->json()['data'],
             ]);
         } else {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to fetch property or category data',
+                'message' => 'Failed to update property',
+            ]);
+        }
+    }
+
+    public function destroy($id)
+    {
+        $token = session('token');
+        $url = env('API_URL') . '/api/property/' . $id;
+
+        $response = Http::withToken($token)->delete($url);
+
+        if ($response->successful()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Property deleted successfully.',
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete property.',
             ]);
         }
     }
