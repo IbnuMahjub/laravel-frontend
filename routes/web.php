@@ -39,10 +39,13 @@ Route::post('/api/logout', [LoginController::class, 'logout']);
 //     return view('dashboard.index');
 // });
 
+Route::get('/test', [DashboardController::class, 'test'])->name('test');
+
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('check.token');
 Route::resource('/category', CategoryController::class)->middleware('check.token');
 
 Route::get('/property', [PropertyController::class, 'index'])->name('property.index')->middleware('check.token');
+Route::get('/property/{id}', [PropertyController::class, 'showProperty'])->name('property.show')->middleware('check.token');
 Route::post('/property', [PropertyController::class, 'storeProperty'])->name('property.store')->middleware('check.token');
 Route::get('/property/{id}/edit', [PropertyController::class, 'editProperty'])->name('property.edit')->middleware('check.token');
 Route::put('/property/{id}', [PropertyController::class, 'updateProperty'])->name('property.update')->middleware('check.token');

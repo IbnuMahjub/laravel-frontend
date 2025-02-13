@@ -32,10 +32,10 @@
                   <a href="javascript:void(0)" class="btn btn-warning btn-sm me-2" onclick="editProperty({{ $item['id']}})">
                     <span data-feather="edit"></span> Edit
                   </a>
-                  
-                    <button type="submit" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $item['id'] }})">
-                      <span data-feather="x-circle"></span> Hapus
-                    </button>
+                  <a href="/property/{{ $item['id'] }}" class="btn btn-primary btn-sm me-2">Detail</a>
+                  <button type="submit" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $item['id'] }})">
+                    <span data-feather="x-circle"></span> Hapus
+                  </button>
                 </td>
               </tr>
               @endforeach
@@ -62,7 +62,8 @@
           </div>
           <div class="mb-3">
             <label for="category_id" class="form-label">Category</label>
-            <select class="form-control" id="category_id" name="category_id">
+            <select class="form-control" id="category_id" name="category_id" data-placeholder="Choose one thing">
+              <option value="">Select Category</option>
               @foreach ($categories as $category)
                 <option value="{{ $category['id'] }}">{{ $category['name'] }}</option>
               @endforeach
@@ -142,6 +143,27 @@ $.ajaxSetup({
   $(document).ready(function() {
     var table = $('#example').DataTable();
 
+    // select2 add modal
+    $('#propertyModal').on('shown.bs.modal', function () {
+        $('#category_id').select2({
+            theme: "bootstrap-5",
+            width: '100%',
+            placeholder: $( this ).data( 'placeholder' ), 
+            dropdownParent: $('#propertyModal') 
+        });
+    });
+
+    // select2 edit modal
+    $('#editPropertyModal').on('shown.bs.modal', function () {
+        $('#edit_category_id').select2({
+            theme: "bootstrap-5",
+            width: '100%',
+            placeholder: "Choose...",
+            allowClear: true,
+            dropdownParent: $('#editPropertyModal') // Pastikan dropdown muncul di dalam modal
+        });
+    });
+
     $('#savePropertyBtn').on('click', function() {
       var formData = new FormData();
       formData.append('name', $('#name').val());
@@ -177,6 +199,9 @@ $.ajaxSetup({
 
             $('#propertyModal').modal('hide');
             $('#propertyForm')[0].reset();
+            setTimeout(function() {
+              location.reload();
+            }, 1000);
         } else {
           Swal.fire({
             icon: 'error',
@@ -296,7 +321,6 @@ $('#updatePropertyBtn').on('click', function() {
     });
 });
 
-// Confirm deletion and send the delete request
 function confirmDelete(id) {
     Swal.fire({
         title: 'Are you sure?',
@@ -307,24 +331,21 @@ function confirmDelete(id) {
         cancelButtonText: 'Cancel'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Proceed with the delete operation
             deleteProperty(id);
         }
     });
 }
 
-// Function to delete the property
 function deleteProperty(id) {
     $.ajax({
         url: '{{ url("property") }}/' + id,
         type: 'DELETE',
         data: {
-            _token: '{{ csrf_token() }}',  // CSRF token
+            _token: '{{ csrf_token() }}',  
         },
         success: function(response) {
             console.log("Response from API:", response);
             if (response.success) {
-                // Remove the row from the table
                 $('#property-' + id).remove();
                 Swal.fire({
                     icon: 'success',

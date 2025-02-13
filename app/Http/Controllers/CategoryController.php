@@ -28,7 +28,6 @@ class CategoryController extends Controller
         if ($response->successful()) {
             return view('dashboard.category.index', [
                 'title' => 'Category',
-                'active' => 'category',
                 'categories' => $response->json(),
             ]);
         } else {
@@ -55,14 +54,12 @@ class CategoryController extends Controller
         // dd($request->all());
         $validated = $request->validate([
             'name' => 'required|string',
-            'slug' => 'required|string',
         ]);
 
         $token = session('token');
         $ul = env('API_URL') . '/api/category';
         $response = Http::withToken($token)->post($ul, [
             'name' => $validated['name'],
-            'slug' => $validated['slug'],
         ]);
         // $response = Http::post($ul, [
         //     'name' => $validated['name'],
@@ -121,7 +118,6 @@ class CategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string',
-            'slug' => 'required|string',
         ]);
 
         $token = session('token');
@@ -129,7 +125,6 @@ class CategoryController extends Controller
 
         $response = Http::withToken($token)->put($url, [
             'name' => $validated['name'],
-            'slug' => $validated['slug'],
         ]);
 
         if ($response->successful()) {

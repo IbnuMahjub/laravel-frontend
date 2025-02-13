@@ -22,7 +22,7 @@ class PropertyController extends Controller
         $urlCategory = env('API_URL') . '/api/category';
         $response = Http::withToken($token)->get($url);
         $category_id = Http::withToken($token)->get($urlCategory);
-        dd($response->json());
+        // dd($response->json());
         // dd($category_id->json());
         if ($response->successful()) {
             return view('dashboard.property.index', [
@@ -36,6 +36,34 @@ class PropertyController extends Controller
             ]);
         }
     }
+
+    public function showProperty($id)
+    {
+        $breadcrumbTitle = 'Detail Property';
+        $breadcrumbs = [
+            ['title' => 'Data Property', 'url' => '/property'],
+            ['title' => 'Data Unit', 'url' => '/unit'],
+        ];
+        $this->generateBreadcrumb($breadcrumbs, $breadcrumbTitle);
+        $token = session('token');
+        $url = env('API_URL') . '/api/property/' . $id;
+        $urlCategory = env('API_URL') . '/api/category';
+        $response = Http::withToken($token)->get($url);
+        $category_id = Http::withToken($token)->get($urlCategory);
+        if ($response->successful()) {
+            return view('dashboard.property.show', [
+                'title' => 'Property',
+                'categories' => $category_id->json(),
+                'property' => $response->json()['data'],
+            ]);
+        } else {
+            return view('errors.api_error', [
+                'message' => 'Failed to fetch property data',
+            ]);
+        }
+    }
+
+
     public function getUnit()
     {
         $breadcrumbTitle = 'List Unit';
