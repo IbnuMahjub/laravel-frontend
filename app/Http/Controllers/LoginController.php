@@ -15,6 +15,39 @@ class LoginController extends Controller
             'active' => 'login'
         ]);
     }
+    // public function authenticate(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'email' => 'required|string',
+    //         'password' => 'required|string',
+    //     ]);
+
+    //     $url = env('API_URL') . '/api/login';
+    //     $response = Http::post($url, [
+    //         'email' => $validated['email'],
+    //         'password' => $validated['password'],
+    //     ]);
+
+    //     if ($response->status() === 401) {
+
+    //         $errorMessage = $response->json()['message'] ?? 'Login failed. Please check your credentials.';
+
+
+    //         return back()->with('loginError', $errorMessage);
+    //     }
+
+    //     if ($response->successful()) {
+    //         $data = $response->json();
+
+    //         Session::put('token', $data['token']);
+    //         Session::put('user', $data['user']);
+
+    //         return redirect('/dashboard');
+    //     }
+
+    //     return back()->with('loginError', 'An unknown error occurred. Please try again.');
+    // }
+
     public function authenticate(Request $request)
     {
         $validated = $request->validate([
@@ -23,39 +56,42 @@ class LoginController extends Controller
         ]);
 
         $url = env('API_URL') . '/api/login';
-        $response = Http::post($url, [
-            'email' => $validated['email'],
-            'password' => $validated['password'],
-        ]);
 
-        if ($response->status() === 401) {
+        try {
+            // Mengirimkan permintaan POST ke API login
+            $response = Http::post($url, [
+                'email' => $validated['email'],
+                'password' => $validated['password'],
+            ]);
 
-            $errorMessage = $response->json()['message'] ?? 'Login failed. Please check your credentials.';
+            if ($response->status() === 401) {
+                $errorMessage = $response->json()['message'] ?? 'Login failed. Please check your credentials.';
+                return back()->with('loginError', $errorMessage);
+            }
 
+            if ($response->successful()) {
+                $data = $response->json();
 
-            return back()->with('loginError', $errorMessage);
+                // Menyimpan token dan data user ke session
+                Session::put('token', $data['token']);
+                Session::put('user', $data['user']);
+
+                return redirect('/dashboard');
+            }
+
+            return back()->with('loginError', 'An unknown error occurred. Please try again.');
+        } catch (\Exception $e) {
+            return back()->with('loginError', 'Maaf Sedang Ada gangguan');
         }
-
-        if ($response->successful()) {
-            $data = $response->json();
-
-            Session::put('token', $data['token']);
-            Session::put('user', $data['user']);
-
-            return redirect('/dashboard');
-        }
-
-        return back()->with('loginError', 'An unknown error occurred. Please try again.');
     }
+
 
 
     public function logout()
     {
-        // Hapus token dan data user dari session
         Session::forget('token');
         Session::forget('user');
 
-        // Redirect ke halaman login
         return redirect()->route('login');
     }
 }

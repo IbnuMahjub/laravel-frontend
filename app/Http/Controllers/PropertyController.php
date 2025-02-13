@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 
 class PropertyController extends Controller
 {
+
     public function index()
     {
         $breadcrumbTitle = 'List Property';
@@ -20,22 +22,29 @@ class PropertyController extends Controller
         $token = session('token');
         $url = env('API_URL') . '/api/property';
         $urlCategory = env('API_URL') . '/api/category';
-        $response = Http::withToken($token)->get($url);
-        $category_id = Http::withToken($token)->get($urlCategory);
-        // dd($response->json());
-        // dd($category_id->json());
-        if ($response->successful()) {
-            return view('dashboard.property.index', [
-                'title' => 'Property',
-                'categories' => $category_id->json(),
-                'properties' => $response->json()['data'],
-            ]);
-        } else {
-            return view('errors.api_error', [
-                'message' => 'Failed to fetch properties from API',
-            ]);
+
+        try {
+            $response = Http::withToken($token)->get($url);
+            $category_id = Http::withToken($token)->get($urlCategory);
+
+            if ($response->successful()) {
+                return view('dashboard.property.index', [
+                    'title' => 'Property',
+                    'categories' => $category_id->json(),
+                    'properties' => $response->json()['data'],
+                ]);
+            } else {
+                return view('errors.api_error', [
+                    'message' => 'Failed to fetch properties from API. Please try again later.',
+                ]);
+            }
+        } catch (\Exception $e) {
+            Session::forget('token');
+            Session::forget('user');
+            return redirect('/login')->with('error', 'Maaf, terjadi gangguan API. Silahkan mohon menunggu.');
         }
     }
+
 
     public function showProperty($id)
     {
@@ -50,6 +59,7 @@ class PropertyController extends Controller
         $urlCategory = env('API_URL') . '/api/category';
         $response = Http::withToken($token)->get($url);
         $category_id = Http::withToken($token)->get($urlCategory);
+        // dd($response->json());
         if ($response->successful()) {
             return view('dashboard.property.show', [
                 'title' => 'Property',

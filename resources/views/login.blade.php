@@ -20,6 +20,13 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         @endif
+
+        @if(session()->has('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
         <div class="col-12 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
           <div class="card rounded-4 mb-0 border-top border-4 border-primary border-gradient-1">
             <div class="card-body p-5">
