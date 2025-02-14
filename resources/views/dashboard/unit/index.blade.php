@@ -2,9 +2,9 @@
 @section('content')
 
 <div class="mb-3">
-  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#categoryModal" id="createCategoryBtn">
+  <a href="/unit/create" class="btn btn-primary">
      Add unit
-  </button>
+  </a>
 </div>
 
 <div class="card">
@@ -13,28 +13,30 @@
         <table id="example" class="table table-bordered" style="width:100%">
            <thead>
               <tr>
-                 <th>Name</th>
-                 <th>Slug</th>
+                 <th>Name property</th>
+                 <th>harga_unit</th>
+                 <th>Tipe Unit</th>
                  <th>Action</th>
               </tr>
            </thead>
-           {{-- <tbody>
-              @foreach ($categories as $item)
-              <tr id="category-{{ $item['id'] }}">
-                 <td>{{ $item['name'] }}</td>
-                 <td>{{ $item['slug'] }}</td>
+           <tbody>
+              @foreach ($units as $item)
+              <tr id="unit-{{ $item['id'] }}">
+                 <td>{{ $item['property']['name'] }}</td>
+                 <td>{{ $item['harga_unit'] }}</td>
+                 <td>{{ $item['tipe'] }}</td>
                  <td class="d-flex">
-                  <a href="javascript:void(0)" class="btn btn-warning btn-sm me-2" onclick="editCategory({{ $item['id']}})">
+                  <a href="/unit/{{ $item['id'] }}/edit" class="btn btn-warning btn-sm me-2">
                     <span data-feather="edit"></span> Edit
                   </a>
-                  
-                    <button type="submit" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $item['id'] }})">
-                      <span data-feather="x-circle"></span> Hapus
-                    </button>
+                  <a href="/unit/{{ $item['id'] }}" class="btn btn-primary btn-sm me-2">Detail</a>
+                  <button type="submit" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $item['id'] }})">
+                    <span data-feather="x-circle"></span> Hapus
+                  </button>
                 </td>
               </tr>
               @endforeach
-           </tbody> --}}
+           </tbody>
         </table>
      </div>
   </div>

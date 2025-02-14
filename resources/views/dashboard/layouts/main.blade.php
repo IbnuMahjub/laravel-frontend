@@ -39,6 +39,8 @@
   <link href="{{ asset('vertical/sass/semi-dark.css') }}" rel="stylesheet">
   <link href="{{ asset('vertical/sass/bordered-theme.css') }}" rel="stylesheet">
   <link href="{{ asset('vertical/sass/responsive.css') }}" rel="stylesheet">
+  <link href="{{ asset('vertical/assets/plugins/fancy-file-uploader/fancy_fileupload.css') }}" rel="stylesheet">
+	<link href="{{ asset('vertical/assets/plugins/Drag-And-Drop/dist/imageuploadify.min.css') }}" rel="stylesheet">
 
   <style>
     .sidebar-nav {
@@ -191,6 +193,12 @@
   <!-- choose one -->
   <script src="https://unpkg.com/feather-icons"></script>
   <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+
+  <script src="{{ asset('vertical/assets/plugins/fancy-file-uploader/jquery.ui.widget.js') }}"></script>
+	<script src="{{ asset('vertical/assets/plugins/fancy-file-uploader/jquery.fileupload.js') }}"></script>
+	<script src="{{ asset('vertical/assets/plugins/fancy-file-uploader/jquery.iframe-transport.js') }}"></script>
+	<script src="{{ asset('vertical/assets/plugins/fancy-file-uploader/jquery.fancy-fileupload.js') }}"></script>
+	<script src="{{ asset('vertical/assets/plugins/Drag-And-Drop/dist/imageuploadify.min.js') }}"></script>
 
   <!-- Custom Scripts for Modal -->
   @yield('scripts')

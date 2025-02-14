@@ -74,32 +74,9 @@ class PropertyController extends Controller
     }
 
 
-    public function getUnit()
-    {
-        $breadcrumbTitle = 'List Unit';
-        $breadcrumbs = [
-            ['title' => 'Data Property', 'url' => '/property'],
-            ['title' => 'Data Unit', 'url' => '/unit'],
-        ];
-        $this->generateBreadcrumb($breadcrumbs, $breadcrumbTitle);
-
-        $token = session('token');
-        $url = env('API_URL') . '/api/property';
-        $response = Http::withToken($token)->get($url);
-        if ($response->successful()) {
-            return view('dashboard.property.unit', [
-                'title' => 'Unit',
-                'categories' => $response->json(),
-            ]);
-        } else {
-            return view('errors.api_error', [
-                'message' => 'Failed to fetch categories from API',
-            ]);
-        }
-    }
-
     public function storeProperty(Request $request)
     {
+
         $validated = $request->validate([
             'name' => 'required|string',
             'alamat' => 'required|string',
@@ -216,5 +193,150 @@ class PropertyController extends Controller
                 'message' => 'Failed to delete property.',
             ]);
         }
+    }
+
+    public function getUnit()
+    {
+        $breadcrumbTitle = 'List Unit';
+        $breadcrumbs = [
+            ['title' => 'Data Property', 'url' => '/property'],
+            ['title' => 'Data Unit', 'url' => '/unit'],
+        ];
+        $this->generateBreadcrumb($breadcrumbs, $breadcrumbTitle);
+
+        $token = session('token');
+        $url = env('API_URL') . '/api/units';
+        $response = Http::withToken($token)->get($url);
+        // dd($response->json());
+        if ($response->successful()) {
+            return view('dashboard.unit.index', [
+                'title' => 'Unit',
+                'units' => $response->json()['data'],
+            ]);
+        } else {
+            return view('errors.api_error', [
+                'message' => 'Failed to fetch categories from API',
+            ]);
+        }
+    }
+
+    public function CreateUnit()
+    {
+        $breadcrumbTitle = 'Create Unit';
+        $breadcrumbs = [
+            ['title' => 'Data Property', 'url' => '/property'],
+            ['title' => 'Data Unit', 'url' => '/unit'],
+        ];
+        $this->generateBreadcrumb($breadcrumbs, $breadcrumbTitle);
+
+        $token = session('token');
+        $url = env('API_URL') . '/api/units';
+        $urlProperty = env('API_URL') . '/api/property';
+        $response = Http::withToken($token)->get($url);
+        $responseProperty = Http::withToken($token)->get($urlProperty);
+        // dd($response->json());
+        // dd($responseProperty->json()['data']);
+        if ($response->successful()) {
+            return view('dashboard.unit.create', [
+                'title' => 'Unit',
+                'properties' => $responseProperty->json()['data'],
+            ]);
+        } else {
+            return view('errors.api_error', [
+                'message' => 'Failed to fetch categories from API',
+            ]);
+        }
+    }
+
+    public function editUnit($id)
+    {
+        $breadcrumbTitle = 'Create Unit';
+        $breadcrumbs = [
+            ['title' => 'Data Property', 'url' => '/property'],
+            ['title' => 'Data Unit', 'url' => '/unit'],
+        ];
+        $this->generateBreadcrumb($breadcrumbs, $breadcrumbTitle);
+
+        $token = session('token');
+        $url = env('API_URL') . '/api/units/' . $id;
+        $urlProperty = env('API_URL') . '/api/property';
+        $responseProperty = Http::withToken($token)->get($urlProperty);
+        $response = Http::withToken($token)->get($url);
+        // dd($responseProperty->json()['data']);
+        // dd($response->json()['data']);
+        if ($response->successful()) {
+            return view('dashboard.unit.edit', [
+                'title' => 'Edit Unit',
+                'property' => $responseProperty->json()['data'],
+                'units' => $response->json()['data']
+            ]);
+        }
+    }
+
+    public function StoreUnit(Request $request)
+    {
+        // dd($request->all());
+
+        $validated = $request->validate([
+            'property_id' => 'required|integer',
+            'tipe' => 'required|string',
+            'deskripsi' => 'required|string',
+            'harga_unit' => 'required|integer',
+            'jumlah_kamar' => 'required|integer',
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $token = session('token');
+        $url = env('API_URL') . '/api/units';
+
+        // Prepare request data
+        $data = [
+            'property_id' => $validated['property_id'],
+            'tipe' => $validated['tipe'],
+            'deskripsi' => $validated['deskripsi'],
+            'harga_unit' => $validated['harga_unit'],
+            'jumlah_kamar' => $validated['jumlah_kamar'],
+        ];
+
+        $requestObj = Http::withToken($token);
+
+        foreach ($request->file('images') as $image) {
+            $requestObj->attach('images[]', fopen($image->getRealPath(), 'r'), $image->getClientOriginalName());
+        }
+
+        $response = $requestObj->post($url, $data);
+
+        $responseData = $response->json();
+        if ($responseData !== null) {
+            Log::info('API Response:', $responseData);
+        } else {
+            Log::info('API Response is null.');
+        }
+
+        if ($response->successful()) {
+            Log::info('API Response Successful', $responseData['data'] ?? []);
+            return response()->json([
+                'success' => true,
+                'unit' => $responseData['data'] ?? [],
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to add unit',
+            ]);
+        }
+    }
+
+    public function updateUnit(Request $request, $id)
+    {
+        dd($request->all());
+        $validated = $request->validate([
+            'property_id' => 'required|integer',
+            'tipe' => 'required|string',
+            'deskripsi' => 'required|string',
+            'harga_unit' => 'required|integer',
+            'jumlah_kamar' => 'required|integer',
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
     }
 }
