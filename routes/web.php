@@ -53,7 +53,8 @@ Route::delete('/property/{id}', [PropertyController::class, 'destroy'])->name('p
 
 Route::get('/unit', [PropertyController::class, 'getUnit'])->name('property.unit')->middleware('check.token');
 Route::get('/unit/{id}', [PropertyController::class, 'getUnit'])->name('unit.show')->middleware('check.token');
-Route::get('/unit/create', [PropertyController::class, 'CreateUnit'])->name('property.unit.create')->middleware('check.token');
+Route::get('/units/create', [PropertyController::class, 'TambahUnit'])->middleware('check.token');
 Route::post('/unit', [PropertyController::class, 'StoreUnit'])->name('unit.store')->middleware('check.token');
 Route::get('/unit/{id}/edit', [PropertyController::class, 'editUnit'])->name('unit.edit')->middleware('check.token');
 Route::put('/unit/{id}', [PropertyController::class, 'updateUnit'])->name('unit.update')->middleware('check.token');
+Route::delete('/unit/{id}', [PropertyController::class, 'destroyUnit'])->name('unit.destroy')->middleware('check.token');

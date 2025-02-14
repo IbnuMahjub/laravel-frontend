@@ -90,10 +90,10 @@
             <input type="text" class="form-control" id="edit_name" name="name">
           </div>
 
-          <div class="mb-3">
+          {{-- <div class="mb-3">
             <label for="edit_slug" class="form-label">Slug</label>
             <input type="text" class="form-control" id="edit_slug" name="slug">
-          </div>
+          </div> --}}
 
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -169,7 +169,6 @@
           if (response.success) {
             $('#edit_category_id').val(response.category.id);
             $('#edit_name').val(response.category.name);
-            $('#edit_slug').val(response.category.slug);
             $('#editCategoryModal').modal('show');
           } else {
             Swal.fire({
@@ -206,7 +205,6 @@
       },
       success: function(response) {
         if (response.success) {
-          // Temukan <tr> yang sesuai dengan ID kategori yang telah diperbarui
           var row = $('#category-' + id); // gunakan id kategori sebagai identifier
 
         // Update data dalam <tr>

@@ -129,8 +129,15 @@
     </div>
   </div>
   <div class="">
-    <a href="/login" class="btn btn-grd btn-grd-primary raised d-flex align-items-center rounded-5 gap-2 px-4" type="button">
-      <i class="material-icons-outlined">account_circle</i>Login
-    </a>
+    @if (session('user'))
+        <a href="/dashboard" class="btn btn-grd btn-grd-primary raised d-flex align-items-center rounded-5 gap-2 px-4" type="button">
+          <i class="material-icons-outlined">home</i>Dashboard
+        </a>
+        @else
+        <a href="/login" class="btn btn-grd btn-grd-primary raised d-flex align-items-center rounded-5 gap-2 px-4" type="button">
+          <i class="material-icons-outlined">account_circle</i>Login
+        </a>
+    @endif
+    
   </div>
 </nav>

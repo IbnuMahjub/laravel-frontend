@@ -26,7 +26,7 @@ class PropertyController extends Controller
         try {
             $response = Http::withToken($token)->get($url);
             $category_id = Http::withToken($token)->get($urlCategory);
-
+            // dd($response->json());
             if ($response->successful()) {
                 return view('dashboard.property.index', [
                     'title' => 'Property',
@@ -81,7 +81,7 @@ class PropertyController extends Controller
             'name' => 'required|string',
             'alamat' => 'required|string',
             'category_id' => 'required|integer',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $token = session('token');
@@ -163,6 +163,7 @@ class PropertyController extends Controller
         Log::info('API Response:', $response->json());
 
         if ($response->successful()) {
+            session()->flash('success', 'Property updated successfully.');
             return response()->json([
                 'success' => true,
                 'property' => $response->json()['data'],
@@ -220,7 +221,7 @@ class PropertyController extends Controller
         }
     }
 
-    public function CreateUnit()
+    public function TambahUnit()
     {
         $breadcrumbTitle = 'Create Unit';
         $breadcrumbs = [
@@ -250,7 +251,7 @@ class PropertyController extends Controller
 
     public function editUnit($id)
     {
-        $breadcrumbTitle = 'Create Unit';
+        $breadcrumbTitle = 'Ubah Unit';
         $breadcrumbs = [
             ['title' => 'Data Property', 'url' => '/property'],
             ['title' => 'Data Unit', 'url' => '/unit'],
@@ -315,6 +316,7 @@ class PropertyController extends Controller
 
         if ($response->successful()) {
             Log::info('API Response Successful', $responseData['data'] ?? []);
+            session()->flash('success', 'Unit berhasil Ditambahkan!');
             return response()->json([
                 'success' => true,
                 'unit' => $responseData['data'] ?? [],
@@ -329,14 +331,81 @@ class PropertyController extends Controller
 
     public function updateUnit(Request $request, $id)
     {
-        dd($request->all());
+        // dd($request->all());
+
         $validated = $request->validate([
             'property_id' => 'required|integer',
             'tipe' => 'required|string',
             'deskripsi' => 'required|string',
             'harga_unit' => 'required|integer',
             'jumlah_kamar' => 'required|integer',
-            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Not required if no new images are uploaded
         ]);
+
+        $token = session('token');
+        $url = env('API_URL') . '/api/units/' . $id;
+        // Prepare request data
+        $data = [
+            'property_id' => $validated['property_id'],
+            'tipe' => $validated['tipe'],
+            'deskripsi' => $validated['deskripsi'],
+            'harga_unit' => $validated['harga_unit'],
+            'jumlah_kamar' => $validated['jumlah_kamar'],
+            '_method' => 'PUT',
+        ];
+
+        // Initialize request object with token
+        $requestObj = Http::withToken($token);
+
+        // Attach images if they exist
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $requestObj->attach('images[]', fopen($image->getRealPath(), 'r'), $image->getClientOriginalName());
+            }
+        }
+
+        $response = $requestObj->post($url, $data);
+
+        $responseData = $response->json();
+        if ($responseData !== null) {
+            Log::info('API Response:', $responseData);
+        } else {
+            Log::info('API Response is null.');
+        }
+
+        // Handle the response
+        if ($response->successful()) {
+            Log::info('API Response Successful', $responseData['data'] ?? []);
+            session()->flash('success', 'Unit berhasil Diupdate!');
+            return response()->json([
+                'success' => true,
+                'unit' => $responseData['data'] ?? [],
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update unit',
+            ]);
+        }
+    }
+
+    public function destroyUnit($id)
+    {
+        $token = session('token');
+        $url = env('API_URL') . '/api/units/' . $id;
+
+        $response = Http::withToken($token)->delete($url);
+
+        if ($response->successful()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Unit deleted successfully.',
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete unit.',
+            ]);
+        }
     }
 }

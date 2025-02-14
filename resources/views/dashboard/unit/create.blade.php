@@ -38,9 +38,10 @@
                         <label for="harga_unit" class="form-label">harga_unit</label>
                         <input type="number" class="form-control" id="harga_unit" name="harga_unit">
                     </div>
-                    <div class="mb-3">
-                        <label for="images" class="form-label">images</label>
-                        <input type="file" class="form-control" id="images" name="images[]" multiple>
+                    <div class="card mb-3">
+                        <div class="card-body bg-dark">
+                                <input id="image-uploadify" type="file" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" name="images[]" multiple>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>

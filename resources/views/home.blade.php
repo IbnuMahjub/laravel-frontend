@@ -7,6 +7,7 @@
     <div class="container py-4 px-4 px-lg-0">
       <div class="row align-items-center justify-content-center g-4">
         <div class="col-12 col-xl-6 order-xl-first order-last">
+          {{-- <pre>{{ var_dump(session()->all()) }}</pre> --}}
           <h1 class="fw-bold mb-3 banner-heading">Improved Business Solutions for Your Organization.</h1>
           <h5 class="mb-0 banner-paragraph">We are a group of talented designers who specialize in developing
             websites using Bootstrap.</h5>

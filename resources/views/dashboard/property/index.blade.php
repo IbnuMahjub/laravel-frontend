@@ -14,6 +14,7 @@
            <thead>
               <tr>
                  <th>Name Property</th>
+                 <th>Slug</th>
                  <th>Category</th>
                  <th>gambar</th>
                  <th>Action</th>
@@ -23,6 +24,7 @@
               @foreach ($properties as $item)
               <tr id="property-{{ $item['id'] }}">
                  <td>{{ $item['name'] }}</td>
+                 <td>{{ $item['slug'] }}</td>
                  <td>{{ $item['category']['name'] }}</td>
                  {{-- <td>{{ $item['alamat'] }}</td> --}}
                  <td>
@@ -184,6 +186,7 @@ $.ajaxSetup({
         if (response.success) {
           table.row.add([
             response.property.name,
+            response.property.slug,
             response.property.category.name,
             '<img src="' + response.property.image + '" alt="Property Image" style="width: 100px;">',
             '<a href="javascript:void(0)" class="btn btn-warning btn-sm me-2" onclick="editCategory(' + response.property.id + ')">Edit</a>' +
@@ -286,9 +289,10 @@ $('#updatePropertyBtn').on('click', function() {
             if (response.success) {
                 // Find the row by property ID and update it
                 var row = $('#property-' + id);
-                row.find('td:eq(0)').text(response.property.name); // Name
-                row.find('td:eq(1)').text(response.property.category.name); // Category
-                row.find('td:eq(2)').html('<img src="' + response.property.image + '" alt="Property Image" style="width: 100px;">'); // Image
+                row.find('td:eq(0)').text(response.property.name); 
+                row.find('td:eq(1)').text(response.property.slug); // Category
+                row.find('td:eq(2)').text(response.property.category.name); // Category
+                row.find('td:eq(3)').html('<img src="' + response.property.image + '" alt="Property Image" style="width: 100px;">'); // Image
                 
                 // Show success message
                 Swal.fire({
