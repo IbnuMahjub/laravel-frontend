@@ -40,6 +40,7 @@ Route::post('/api/logout', [LoginController::class, 'logout']);
 // });
 
 Route::get('/test', [DashboardController::class, 'test'])->name('test');
+Route::post('/test', [DashboardController::class, 'storeTest']);
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('check.token');
 Route::resource('/category', CategoryController::class)->middleware('check.token');

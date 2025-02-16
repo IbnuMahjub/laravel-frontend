@@ -40,7 +40,6 @@ class PropertyController extends Controller
             }
         } catch (\Exception $e) {
             Session::forget('token');
-            Session::forget('user');
             return redirect('/login')->with('error', 'Maaf, terjadi gangguan API. Silahkan mohon menunggu.');
         }
     }
@@ -81,7 +80,7 @@ class PropertyController extends Controller
             'name' => 'required|string',
             'alamat' => 'required|string',
             'category_id' => 'required|integer',
-            'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $token = session('token');
@@ -278,14 +277,20 @@ class PropertyController extends Controller
     {
         // dd($request->all());
 
-        $validated = $request->validate([
-            'property_id' => 'required|integer',
-            'tipe' => 'required|string',
-            'deskripsi' => 'required|string',
-            'harga_unit' => 'required|integer',
-            'jumlah_kamar' => 'required|integer',
-            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        $validated = $request->validate(
+            [
+                'property_id' => 'required|integer',
+                'tipe' => 'required|string',
+                'deskripsi' => 'required|string',
+                'harga_unit' => 'required|integer',
+                'jumlah_kamar' => 'required|integer',
+                'images' => 'required|array|min:2',
+            ],
+            [
+                'images.array' => 'Image harus berupa array',
+                'images.min' => 'Image harus memiliki minimal 2 gambar',
+            ]
+        );
 
         $token = session('token');
         $url = env('API_URL') . '/api/units';
@@ -317,15 +322,17 @@ class PropertyController extends Controller
         if ($response->successful()) {
             Log::info('API Response Successful', $responseData['data'] ?? []);
             session()->flash('success', 'Unit berhasil Ditambahkan!');
-            return response()->json([
-                'success' => true,
-                'unit' => $responseData['data'] ?? [],
-            ]);
+            return redirect('/unit')->with('success', 'Unit berhasil Ditambahkan!');
+            // return response()->json([
+            //     'success' => true,
+            //     'unit' => $responseData['data'] ?? [],
+            // ]);
         } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to add unit',
-            ]);
+            return redirect('/unit')->with('error', 'Unit gagal ditambahkan!');
+            // return response()->json([
+            //     'success' => false,
+            //     'message' => 'Failed to add unit',
+            // ]);
         }
     }
 
@@ -382,10 +389,11 @@ class PropertyController extends Controller
                 'unit' => $responseData['data'] ?? [],
             ]);
         } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to update unit',
-            ]);
+            return redirect('/unit')->with('error', 'Unit gagal diupdate!');
+            // return response()->json([
+            //     'success' => false,
+            //     'message' => 'Failed to update unit',
+            // ]);
         }
     }
 

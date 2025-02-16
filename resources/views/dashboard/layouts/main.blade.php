@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-bs-theme="light">
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
@@ -28,7 +28,6 @@
   <!--bootstrap css-->
   <link href="{{ asset('vertical/assets/css/bootstrap.min.css') }}" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.bootstrap5.css">
-  {{-- <link href="{{ asset('vertical/assets/plugins/datatable/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" /> --}}
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Material+Icons+Outlined" rel="stylesheet">
   <!--main css-->
@@ -43,33 +42,30 @@
 	<link href="{{ asset('vertical/assets/plugins/Drag-And-Drop/dist/imageuploadify.min.css') }}" rel="stylesheet">
 
   <style>
+
     .sidebar-nav {
-        background-color: #f8f9fa; /* Warna latar belakang sidebar */
+        background-color: #f8f9fa; 
         padding: 10px;
     }
 
-    /* Gaya untuk elemen <a> di dalam sidebar */
     .sidebar-nav a {
-        color: inherit; /* Menggunakan warna dari parent */
-        text-decoration: none; /* Menghilangkan underline */
+        color: inherit; 
+        text-decoration: none;
         display: block;
         padding: 8px 12px;
         border-radius: 4px;
     }
 
-    /* Gaya untuk elemen <a> saat hover */
     .sidebar-nav a:hover {
-        background-color: #e9ecef; /* Warna latar belakang saat hover */
-        color: #000; /* Warna teks saat hover */
+        background-color: #e9ecef; 
+        color: #000;
     }
 
-    /* Gaya untuk menu aktif */
     .sidebar-nav .metismenu .mm-active > a {
-        background-color: #007bff; /* Warna latar belakang menu aktif */
-        color: #fff; /* Warna teks menu aktif */
+        background-color: #007bff;
+        color: #fff; 
     }
 
-    /* Gaya untuk sub-menu yang aktif */
     .sidebar-nav .metismenu .mm-show .active > a {
         background-color: #0056b3; /* Warna latar belakang sub-menu aktif */
         color: #fff; /* Warna teks sub-menu aktif */
@@ -150,6 +146,66 @@
   </main>
   <!--end main wrapper-->
 
+  <button class="btn btn-grd btn-grd-primary position-fixed bottom-0 end-0 m-3 d-flex align-items-center gap-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop">
+    <i class="material-icons-outlined">tune</i>Customize
+  </button>
+  
+  <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="staticBackdrop">
+    <div class="offcanvas-header border-bottom h-70">
+      <div class="">
+        <h5 class="mb-0">Theme Customizer</h5>
+        <p class="mb-0">Customize your theme</p>
+      </div>
+      <a href="javascript:;" class="primaery-menu-close" data-bs-dismiss="offcanvas">
+        <i class="material-icons-outlined">close</i>
+      </a>
+    </div>
+    <div class="offcanvas-body">
+      <div>
+        <p>Theme variation</p>
+  
+        <div class="row g-3">
+          <div class="col-12 col-xl-6">
+            <input type="radio" class="btn-check" name="theme-options" id="BlueTheme">
+            <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="BlueTheme">
+              <span class="material-icons-outlined">contactless</span>
+              <span>Blue</span>
+            </label>
+          </div>
+          <div class="col-12 col-xl-6">
+            <input type="radio" class="btn-check" name="theme-options" id="LightTheme" checked>
+            <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="LightTheme">
+              <span class="material-icons-outlined">light_mode</span>
+              <span>Light</span>
+            </label>
+          </div>
+          <div class="col-12 col-xl-6">
+            <input type="radio" class="btn-check" name="theme-options" id="DarkTheme">
+            <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="DarkTheme">
+              <span class="material-icons-outlined">dark_mode</span>
+              <span>Dark</span>
+            </label>
+          </div>
+          <div class="col-12 col-xl-6">
+            <input type="radio" class="btn-check" name="theme-options" id="SemiDarkTheme">
+            <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="SemiDarkTheme">
+              <span class="material-icons-outlined">contrast</span>
+              <span>Semi Dark</span>
+            </label>
+          </div>
+          <div class="col-12 col-xl-6">
+            <input type="radio" class="btn-check" name="theme-options" id="BoderedTheme">
+            <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="BoderedTheme">
+              <span class="material-icons-outlined">border_style</span>
+              <span>Bordered</span>
+            </label>
+          </div>
+        </div><!--end row-->
+  
+      </div>
+    </div>
+  </div>
+
   <!--start overlay-->
   <div class="overlay btn-toggle"></div>
   <!--end overlay-->
@@ -190,17 +246,48 @@
   <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
   <script src="https://cdn.datatables.net/2.2.2/js/dataTables.bootstrap5.js"></script>
 
-  <!-- choose one -->
-  <script src="https://unpkg.com/feather-icons"></script>
-  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 
   <script src="{{ asset('vertical/assets/plugins/fancy-file-uploader/jquery.ui.widget.js') }}"></script>
 	<script src="{{ asset('vertical/assets/plugins/fancy-file-uploader/jquery.fileupload.js') }}"></script>
 	<script src="{{ asset('vertical/assets/plugins/fancy-file-uploader/jquery.iframe-transport.js') }}"></script>
 	<script src="{{ asset('vertical/assets/plugins/fancy-file-uploader/jquery.fancy-fileupload.js') }}"></script>
 	<script src="{{ asset('vertical/assets/plugins/Drag-And-Drop/dist/imageuploadify.min.js') }}"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+    // Cek apakah ada tema yang disimpan sebelumnya di localStorage
+    const savedTheme = localStorage.getItem("theme");
+    
+    if (savedTheme) {
+        // Jika ada, terapkan tema yang disimpan
+        document.body.classList.add(savedTheme);
+    }
 
-  <!-- Custom Scripts for Modal -->
+    // Pilih radio button berdasarkan tema yang disimpan
+    const themeOptions = document.getElementsByName("theme-options");
+    themeOptions.forEach(option => {
+        if (option.id === savedTheme) {
+            option.checked = true;
+        }
+    });
+
+    // Event listener untuk perubahan tema
+    themeOptions.forEach(option => {
+        option.addEventListener("change", function() {
+            if (this.checked) {
+                // Hapus kelas tema lama
+                document.body.classList.remove("blue-theme", "dark-theme", "light-theme", "semi-dark", "bordered-theme");
+                
+                // Tambahkan kelas tema baru
+                document.body.classList.add(this.id);
+
+                // Simpan pilihan tema di localStorage
+                localStorage.setItem("theme", this.id);
+            }
+        });
+    });
+});
+
+  </script>
   @yield('scripts')
 </body>
 

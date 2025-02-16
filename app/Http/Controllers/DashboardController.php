@@ -56,4 +56,26 @@ class DashboardController extends Controller
 
         ]);
     }
+
+    public function storeTest(Request $request)
+    {
+        // dd($request->all());
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'alamat' => 'required|string',
+            'property_id' => 'required|integer',
+            'harga' => 'required|numeric',
+            'image' => 'required|array|min:3',
+            // 'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'name.required' => 'Name is harus diisi',
+            'alamat.required' => 'Alamat is harus diisi',
+            'property_id.required' => 'Property ID is harus diisi',
+            'harga.required' => 'Harga is harus diisi',
+            'harga.numeric' => 'Harga harus berupa angka',
+            'image.required' => 'Image is harus diisi',
+            'image.array' => 'Image harus berupa array',
+            'image.min' => 'Image harus memiliki minimal 3 gambar',
+        ]);
+    }
 }

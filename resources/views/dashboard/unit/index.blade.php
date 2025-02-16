@@ -46,12 +46,21 @@
 @section('scripts')
 <script>
     @if(session('success'))
-    Swal.fire({
-      icon: 'success',
-      title: 'Success!',
-      text: '{{ session('success') }}',
-    });
-  @endif
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: '{{ session('success') }}',
+        });
+    @endif
+
+    @if(session('error'))
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: '{{ session('error') }}',
+        });
+    @endif
+
 
   function confirmDelete(id) {
     Swal.fire({

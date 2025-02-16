@@ -4,16 +4,7 @@
   <div class="card w-100 overflow-hidden rounded-4">
     <div class="card-body position-relative p-4">
       <div class="row">
-        <div class="col-12 col-sm-7">
-          <div class="mb-4">
-            <label for="coba" class="form-label">Single select w/ allow clear</label>
-             <select class="form-select" id="coba" data-placeholder="Choose one thing">
-               @foreach ($properties as $item)
-                   <option value="{{ $item['id'] }}">{{ $item['name'] }}</option>
-               @endforeach
-             </select>
-           </div>
-        </div>
+      
         <div class="col-12 col-sm-5">
           <h5 class="mb-0">Form Modal</h5>
           <p class="my-3">In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to
@@ -60,6 +51,65 @@
           </div>
         </div>
       </div><!--end row-->
+      <div class="row">
+        <div class="col-12 col-sm-7">
+          <form action="/test" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="mb-3">
+              <label for="coba" class="form-label">Single select w/ allow clear</label>
+                <select class="form-select @error('property_id') is-invalid @enderror" id="cobadua" data-placeholder="Choose one thing" name="property_id">
+                  <option value="">Pilih</option>
+                  @foreach ($properties as $item)
+                      <option value="{{ $item['id'] }}">{{ $item['name'] }}</option>
+                  @endforeach
+                </select>
+                @error('property_id')
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+            <div class="mb-3">
+              <label for="alamat" class="form-label">Alamat</label>
+              <input type="text" class="form-control @error('alamat') is-invalid @enderror" id="alamat" name="alamat">
+              @error('alamat')
+                  <div class="invalid-feedback">
+                      {{ $message }}
+                  </div>
+              @enderror
+            </div>
+            <div class="mb-3">
+              <label for="harga" class="form-label">harga</label>
+              <input type="text" class="form-control @error('harga') is-invalid @enderror" id="harga" name="harga">
+              @error('harga')
+                  <div class="invalid-feedback">
+                      {{ $message }}
+                  </div>
+              @enderror
+            </div>
+            <div class="mb-3">
+              <label for="name" class="form-label">name</label>
+              <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name">
+              @error('name')
+                  <div class="invalid-feedback">
+                      {{ $message }}
+                  </div>
+              @enderror
+            </div>
+
+            <div class="mb-3">
+              <label for="image" class="form-label">image</label>
+              <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image[]" multiple>
+              @error('image')
+                  <div class="invalid-feedback">
+                      {{ $message }}
+                  </div>
+              @enderror
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -72,6 +122,12 @@
         width: '100%',
         placeholder: "Choose one thing",
         allowClear: true
+    });
+    $('#cobadua').select2({
+        theme: "bootstrap-5",
+        width: '100%',
+        placeholder: "Choose one thing",
+        
     });
 
     // Inisialisasi Select2 setelah modal muncul

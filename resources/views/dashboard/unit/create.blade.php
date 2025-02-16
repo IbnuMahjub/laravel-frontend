@@ -10,40 +10,73 @@
                 <div class="col-lg-12">
                     <div class="mb-3">
                         <label for="property_id" class="form-label">Property</label>
-                        <select class="form-control" id="property_id" name="property_id" data-placeholder="Choose one thing">
+                        <select class="form-control @error('property_id') is-invalid @enderror" id="property_id" name="property_id" data-placeholder="Choose one thing">
                             <option value="">Select Property</option>
                             @foreach ($properties as $property)
-                                <option value="{{ $property['id'] }}">{{ $property['name'] }}</option>
+                                <option value="{{ $property['id'] }}" {{ old('property_id') == $property['id'] ? 'selected' : '' }}>{{ $property['name'] }}</option>
                             @endforeach
                         </select>
+                        @error('property_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
+                    
                     <div class="mb-3">
                         <label for="tipe" class="form-label">Tipe</label>
-                        <select class="form-control" id="tipe" name="tipe" data-placeholder="Choose one thing">
+                        <select class="form-control @error('tipe') is-invalid @enderror" id="tipe" name="tipe" data-placeholder="Choose one thing">
                             <option value="">Select Tipe</option>
-                            <option value="Deluxe">Deluxe</option>
-                            <option value="Standard">Standard</option>
-                            <option value="Suite">Suite</option>
+                            <option value="Deluxe" {{ old('tipe') == 'Deluxe' ? 'selected' : '' }}>Deluxe</option>
+                            <option value="Standard" {{ old('tipe') == 'Standard' ? 'selected' : '' }}>Standard</option>
+                            <option value="Suite" {{ old('tipe') == 'Suite' ? 'selected' : '' }}>Suite</option>
                         </select>
+                        @error('tipe')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
+                    
                     <div class="mb-3">
-                        <label for="deskripsi" class="form-label">deskripsi</label>
-                        <input type="text" class="form-control" id="deskripsi" name="deskripsi">
+                        <label for="deskripsi" class="form-label">Deskripsi</label>
+                        <input type="text" class="form-control @error('deskripsi') is-invalid @enderror" id="deskripsi" name="deskripsi" value="{{ old('deskripsi') }}">
+                        @error('deskripsi')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
+                    
                     <div class="mb-3">
-                        <label for="jumlah_kamar" class="form-label">jumlah_kamar</label>
-                        <input type="number" class="form-control" id="jumlah_kamar" name="jumlah_kamar">
+                        <label for="jumlah_kamar" class="form-label">Jumlah Kamar</label>
+                        <input type="number" class="form-control @error('jumlah_kamar') is-invalid @enderror" id="jumlah_kamar" name="jumlah_kamar" value="{{ old('jumlah_kamar') }}">
+                        @error('jumlah_kamar')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
+                    
                     <div class="mb-3">
-                        <label for="harga_unit" class="form-label">harga_unit</label>
-                        <input type="number" class="form-control" id="harga_unit" name="harga_unit">
-                    </div>
-                    <div class="card mb-3">
-                        <div class="card-body bg-dark">
-                                <input id="image-uploadify" type="file" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" name="images[]" multiple>
+                        <label for="harga_unit" class="form-label">Harga Unit</label>
+                        <input type="number" class="form-control @error('harga_unit') is-invalid @enderror" id="harga_unit" name="harga_unit" value="{{ old('harga_unit') }}">
+                        @error('harga_unit')
+                        <div class="invalid-feedback">
+                          {{ $message }}
                         </div>
+                      @enderror
                     </div>
+
+                    <div class="mb-3">
+                        <label for="images" class="form-label">Images</label>
+                        <input type="file" class="form-control @error('images') is-invalid @enderror" id="images" name="images[]" multiple>
+                        @error('images')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    
+                    {{-- <div class="card mb-3">
+                        <div class="card-body bg-dark @error('images') is-invalid @enderror">
+                            <input id="image-uploadify" type="file" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" name="images[]" multiple>
+                        </div>
+                    </div> --}}
                     <button type="submit" class="btn btn-primary">Simpan</button>
+                    
                 </div>
             </div>
         </form>
