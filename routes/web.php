@@ -31,6 +31,12 @@ Route::get('/', function () {
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'authenticate'])->name('login.authenticate');
 Route::post('/logout', [LoginController::class, 'logout']);
+Route::get('/lupa-password', [LoginController::class, 'v_resetpassword']);
+
+Route::get('/reset-password', [LoginController::class, 'getTokenEmail']);
+Route::post('/reset-password', [LoginController::class, 'sendEmail'])->name('reset.sendEmail');
+
+Route::post('/resetpw', [LoginController::class, 'resetPassword'])->name('pw.resetPassword');
 
 Route::post('/api/login', [LoginController::class, 'authenticate']);
 Route::post('/api/logout', [LoginController::class, 'logout']);
