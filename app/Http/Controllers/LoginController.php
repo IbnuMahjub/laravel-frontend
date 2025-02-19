@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
-
+use Laravel\Socialite\Facades\Socialite;
 class LoginController extends Controller
 {
     public function index()
@@ -52,6 +52,39 @@ class LoginController extends Controller
         }
     }
 
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        try {
+            $googleUser = Socialite::driver('google')->user();
+
+            // dd($googleUser);
+            $url = env('API_URL') . '/api/login/google';
+
+            $response = Http::post($url, [
+                'name' => $googleUser->name,
+                'email' => $googleUser->email,
+                'google_id' => $googleUser->id,
+                'avatar' => $googleUser->avatar,
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                Session::put('token', $data['token']);
+                Session::put('user', $data['user']);
+                return redirect('/dashboard');
+            }
+
+            return redirect('/login')->with('loginError', 'Google login gagal.');
+        } catch (\Exception $e) {
+            return redirect('/login')->with('loginError', 'Terjadi kesalahan.');
+        }
+    }
+
 
 
     public function logout()
@@ -59,10 +92,17 @@ class LoginController extends Controller
         Session::forget('token');
         Session::forget('user');
 
+        Session::flush();
         return redirect()->route('login');
     }
 
-    
+    public function register()
+    {
+        return view('register', [
+            'title' => 'Register',
+            'active' => 'register'
+        ]);
+    }
 
     /**
      * Display the reset password page.
@@ -133,5 +173,32 @@ class LoginController extends Controller
             return back()->with('loginError', 'Maaf Sedang Ada gangguan');
         }
         
+    }
+
+    public function storeRegister(Request $request)
+    {
+        // dd($request->all());
+        $validated = $request->validate([
+            'username' => 'required|string',
+            'email' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        $url = env('API_URL') . '/api/register';
+        $response = Http::post($url, [
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+            'password' => $validated['password'],
+        ]);
+
+        try {
+            if ($response->successful()) {
+                $data = $response->json();
+                return redirect('/login')->with('success', $data['message']);
+            }
+            return back()->with('loginError', 'An unknown error occurred. Please try again.');
+        } catch (\Throwable $th) {
+            return back()->with('loginError', $th->getMessage());
+        }
     }
 }

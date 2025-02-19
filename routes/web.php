@@ -30,8 +30,14 @@ Route::get('/', function () {
 
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'authenticate'])->name('login.authenticate');
+
+Route::get('/login/google', [LoginController::class, 'redirectToGoogle']);
+Route::get('/login/google/callback', [LoginController::class, 'handleGoogleCallback']);
+
 Route::post('/logout', [LoginController::class, 'logout']);
 Route::get('/lupa-password', [LoginController::class, 'v_resetpassword']);
+Route::get('/register', [LoginController::class, 'register']);
+Route::post('/register', [LoginController::class, 'storeRegister'])->name('register.storeRegister');
 
 Route::get('/reset-password', [LoginController::class, 'getTokenEmail']);
 Route::post('/reset-password', [LoginController::class, 'sendEmail'])->name('reset.sendEmail');

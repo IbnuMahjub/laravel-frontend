@@ -295,7 +295,6 @@ class PropertyController extends Controller
         $token = session('token');
         $url = env('API_URL') . '/api/units';
 
-        // Prepare request data
         $data = [
             'property_id' => $validated['property_id'],
             'tipe' => $validated['tipe'],
@@ -323,10 +322,6 @@ class PropertyController extends Controller
             Log::info('API Response Successful', $responseData['data'] ?? []);
             session()->flash('success', 'Unit berhasil Ditambahkan!');
             return redirect('/unit')->with('success', 'Unit berhasil Ditambahkan!');
-            // return response()->json([
-            //     'success' => true,
-            //     'unit' => $responseData['data'] ?? [],
-            // ]);
         } else {
             return redirect('/unit')->with('error', 'Unit gagal ditambahkan!');
             // return response()->json([

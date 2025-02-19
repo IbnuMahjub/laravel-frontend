@@ -31,42 +31,55 @@
           <div class="card rounded-4 mb-0 border-top border-4 border-primary border-gradient-1">
             <div class="card-body p-5">
                <img src="assets/images/logo1.png" class="mb-4 img-fluid" width="145" alt="Logo">
-               <h4 class="fw-bold">Get Started Now</h4>
-               <p class="mb-0">Enter your credentials to login your account</p>
+               <h4 class="fw-bold">Sign Up</h4>
+               <p class="mb-0">Enter your information to create your account</p>
 
                <div class="form-body my-5">
-                 <form class="row g-3" action="{{ route('login.authenticate') }}" method="POST">
+                 <form class="row g-3" action="{{ route('register.storeRegister') }}" method="POST">
                   @csrf
                    <div class="col-12">
-                     <label for="inputEmailAddress" class="form-label">Email</label>
-                     <input type="email" class="form-control" id="inputEmailAddress" placeholder="jhon@example.com" name="email">
+                     <label for="inputEmailAddress" class="form-label @error('email') is-invalid @enderror">Email</label>
+                     <input type="email" class="form-control " id="inputEmailAddress" placeholder="jhon@example.com" name="email" value="{{ old('email') }}">
+                     @error('email')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                    @enderror
+                   </div>
+                   <div class="col">
+                    <label for="username" class="form-label @error('username') is-invalid @enderror">Username</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="username" placeholder="Username" name="username" value="{{ old('username') }}">
+                    </div>
+                    @error('username')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                    @enderror
                    </div>
                    <div class="col-12">
                      <label for="inputChoosePassword" class="form-label">Password</label>
-                     <div class="input-group" id="show_hide_password">
-                       <input type="password" class="form-control border-end-0" id="inputChoosePassword" placeholder="Enter Password" name="password"> 
+                     <div class="input-group @error('password') is-invalid @enderror" id="show_hide_password">
+                       <input type="password" class="form-control border-end-0" id="inputChoosePassword" placeholder="Enter Password" name="password" value="{{ old('password') }}"> 
                        <a href="javascript:;" class="input-group-text bg-transparent"><i class="bi bi-eye-slash-fill"></i></a>
                      </div>
+                     @error('password')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                    @enderror
                    </div>
                    <div class="col-md-6 text-end"> 
                      <a href="/lupa-password">Forgot Password ?</a>
                    </div>
                    <div class="col-12">
                      <div class="d-grid">
-                       <button type="submit" class="btn btn-grd-primary">Login</button>
+                       <button type="submit" class="btn btn-grd-primary">Register</button>
                      </div>
                    </div>
                    <div class="col-12">
-                    <div class="d-grid">
-                      <a href="{{ url('/login/google') }}" class="btn btn-light border d-flex align-items-center justify-content-center">
-                        <img src="{{ asset('assets/images/google-icon.png') }}" alt="Google" width="20" class="me-2"> 
-                        Login with Google
-                      </a>
-                    </div>
-                  </div>                  
-                   <div class="col-12">
                      <div class="text-start">
-                       <p class="mb-0">Don't have an account yet? <a href="/register">Sign up here</a></p>
+                       <p class="mb-0">already have an account? <a href="/login">Sign here</a></p>
                      </div>
                    </div>
                  </form>
