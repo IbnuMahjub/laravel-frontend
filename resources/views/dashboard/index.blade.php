@@ -6,11 +6,11 @@
       <div class="row">
         <div class="col-12 col-sm-7">
           <div class="d-flex align-items-center gap-3 mb-5">
-            <img src="{{ session('user')['avatar'] }}" class="rounded-circle bg-grd-info p-1"  width="60" height="60" alt="user">
+            <img src="{{ session('user')['avatar'] ?? asset('vertical/assets/images/avatars/11.png') }}" class="rounded-circle bg-grd-info p-1"  width="60" height="60" alt="user">
             <div class="">
               <p class="mb-0 fw-semibold">Welcome back</p>
               <h4 class="fw-semibold mb-0 fs-4 mb-0">{{ session('user')['name'] }}</h4>
-              {{-- <pre>{{ var_dump(session()->all()) }}</pre> --}}
+              <pre>{{ var_dump(session()->all()) }}</pre>
             </div>
           </div>
           <div class="d-flex align-items-center gap-5">

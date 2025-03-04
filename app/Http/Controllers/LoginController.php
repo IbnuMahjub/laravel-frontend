@@ -26,7 +26,6 @@ class LoginController extends Controller
         $url = env('API_URL') . '/api/login';
 
         try {
-            // Mengirimkan permintaan POST ke API login
             $response = Http::post($url, [
                 'email' => $validated['email'],
                 'password' => $validated['password'],
@@ -175,30 +174,56 @@ class LoginController extends Controller
         
     }
 
+    // public function storeRegister(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'username' => 'required|string',
+    //         'email' => 'required|string',
+    //         'password' => 'required|string',
+    //     ]);
+
+    //     $url = env('API_URL') . '/api/register';
+
+    //     try {
+    //         $response = Http::post($url, [
+    //             'username' => $validated['username'],
+    //             'email' => $validated['email'],
+    //             'password' => $validated['password'],
+    //         ]);
+
+    //         // dd($response->status(), $response->json());
+
+    //         if ($response->successful()) {
+    //             $data = $response->json();
+    //             return redirect('/login')->with('success', $data['message']);
+    //         }
+
+    //         if ($response->status() === 422) {
+    //             $responseData = $response->json();
+    //             if (isset($responseData['errors'])) {
+    //                 return back()->withErrors($responseData['errors'])->withInput();
+    //             }
+    //         }
+
+    //         return back()->with('loginError', 'An unknown error occurred. Please try again.');
+    //     } catch (\Throwable $th) {
+    //         return back()->with('loginError', $th->getMessage());
+    //     }
+    // }
+
+    // cara simple
     public function storeRegister(Request $request)
     {
-        // dd($request->all());
-        $validated = $request->validate([
-            'username' => 'required|string',
-            'email' => 'required|string',
-            'password' => 'required|string',
-        ]);
-
         $url = env('API_URL') . '/api/register';
-        $response = Http::post($url, [
-            'username' => $validated['username'],
-            'email' => $validated['email'],
-            'password' => $validated['password'],
-        ]);
 
-        try {
-            if ($response->successful()) {
-                $data = $response->json();
-                return redirect('/login')->with('success', $data['message']);
-            }
-            return back()->with('loginError', 'An unknown error occurred. Please try again.');
-        } catch (\Throwable $th) {
-            return back()->with('loginError', $th->getMessage());
+        $response = Http::post($url, $request->all());
+
+        if ($response->failed() && $response->status() === 422) {
+            return back()->withErrors($response->json('errors'))->withInput();
         }
+
+        return redirect('/login')->with('success', 'Register berhasil!');
     }
+
+
 }

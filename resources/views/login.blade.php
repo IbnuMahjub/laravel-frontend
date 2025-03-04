@@ -59,7 +59,7 @@
                    <div class="col-12">
                     <div class="d-grid">
                       <a href="{{ url('/login/google') }}" class="btn btn-light border d-flex align-items-center justify-content-center">
-                        <img src="{{ asset('assets/images/google-icon.png') }}" alt="Google" width="20" class="me-2"> 
+                        <img src="{{ asset('assets/images/apps/05.png') }}" alt="Google" width="20" class="me-2"> 
                         Login with Google
                       </a>
                     </div>
