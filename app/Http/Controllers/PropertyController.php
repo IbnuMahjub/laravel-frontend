@@ -21,21 +21,18 @@ class PropertyController extends Controller
 
         $token = session('token');
         $url = env('API_URL') . '/api/property';
-        $urlCategory = env('API_URL') . '/api/category';
+        $urlCategory = env('API_URL') . '/api/valueCategory';
 
         try {
             $response = Http::withToken($token)->get($url);
             $category_id = Http::withToken($token)->get($urlCategory);
             // dd($response->json());
+            // dd($category_id->json());
             if ($response->successful()) {
                 return view('dashboard.property.index', [
                     'title' => 'Property',
-                    'categories' => $category_id->json(),
+                    'categories' => $category_id->json()['data'],
                     'properties' => $response->json()['data'],
-                ]);
-            } else {
-                return view('errors.api_error', [
-                    'message' => 'Failed to fetch properties from API. Please try again later.',
                 ]);
             }
         } catch (\Exception $e) {
@@ -77,7 +74,7 @@ class PropertyController extends Controller
     {
 
         $validated = $request->validate([
-            'name' => 'required|string',
+            'name_property' => 'required|string',
             'alamat' => 'required|string',
             'category_id' => 'required|integer',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -89,7 +86,7 @@ class PropertyController extends Controller
         $response = Http::withToken($token)
             ->attach('image', fopen($request->file('image')->getRealPath(), 'r'), $request->file('image')->getClientOriginalName())
             ->post($url, [
-                'name' => $validated['name'],
+                'name_property' => $validated['name_property'],
                 'alamat' => $validated['alamat'],
                 'category_id' => $validated['category_id'],
             ]);
@@ -134,7 +131,7 @@ class PropertyController extends Controller
     public function updateProperty(Request $request, $id)
     {
         $validated = $request->validate([
-            'name' => 'required|string',
+            'name_property' => 'required|string',
             'alamat' => 'required|string',
             'category_id' => 'required|integer',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -144,7 +141,7 @@ class PropertyController extends Controller
         $url = env('API_URL') . '/api/property/' . $id;
 
         $data = [
-            'name' => $validated['name'],
+            'name_property' => $validated['name_property'],
             'alamat' => $validated['alamat'],
             'category_id' => $validated['category_id'],
             '_method' => 'PUT',

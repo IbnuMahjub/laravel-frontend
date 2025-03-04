@@ -23,9 +23,9 @@
            <tbody>
               @foreach ($properties as $item)
               <tr id="property-{{ $item['id'] }}">
-                 <td>{{ $item['name'] }}</td>
+                 <td>{{ $item['name_property'] }}</td>
                  <td>{{ $item['slug'] }}</td>
-                 <td>{{ $item['category']['name'] }}</td>
+                 <td>{{ $item['data_category']['name'] }}</td>
                  {{-- <td>{{ $item['alamat'] }}</td> --}}
                  <td>
                   <img src="{{ $item['image'] }}" alt="" width="100">
@@ -60,14 +60,14 @@
           @csrf
           <div class="mb-3">
             <label for="name" class="form-label">Name Property</label>
-            <input type="text" class="form-control" id="name" name="name">
+            <input type="text" class="form-control" id="name_property" name="name_property">
           </div>
           <div class="mb-3">
             <label for="category_id" class="form-label">Category</label>
             <select class="form-control" id="category_id" name="category_id" data-placeholder="Choose one thing">
               <option value="">Select Category</option>
               @foreach ($categories as $category)
-                <option value="{{ $category['id'] }}">{{ $category['name'] }}</option>
+                <option value="{{ $category['id'] }}">{{ $category['name_category'] }}</option>
               @endforeach
             </select>
           </div>
@@ -103,14 +103,14 @@
           @method('PUT')
           <input type="hidden" id="edit_property_id" name="id">
           <div class="mb-3">
-            <label for="edit_name" class="form-label">Name Property</label>
-            <input type="text" class="form-control" id="edit_name" name="name">
+            <label for="edit_name_property" class="form-label">Name Property</label>
+            <input type="text" class="form-control" id="edit_name_property" name="name_property">
           </div>
           <div class="mb-3">
             <label for="edit_category_id" class="form-label">Category</label>
             <select class="form-control" id="edit_category_id" name="category_id">
               @foreach ($categories as $category)
-                <option value="{{ $category['id'] }}">{{ $category['name'] }}</option>
+                <option value="{{ $category['id'] }}">{{ $category['name_category'] }}</option>
               @endforeach
             </select>
           </div>
@@ -162,13 +162,13 @@ $.ajaxSetup({
             width: '100%',
             placeholder: "Choose...",
             allowClear: true,
-            dropdownParent: $('#editPropertyModal') // Pastikan dropdown muncul di dalam modal
+            dropdownParent: $('#editPropertyModal') 
         });
     });
 
     $('#savePropertyBtn').on('click', function() {
       var formData = new FormData();
-      formData.append('name', $('#name').val());
+      formData.append('name_property', $('#name_property').val());
       formData.append('category_id', $('#category_id').val());
       formData.append('alamat', $('#alamat').val());
       formData.append('image', $('#image')[0].files[0]);  
@@ -185,9 +185,9 @@ $.ajaxSetup({
         console.log("Response from API:", response);
         if (response.success) {
           table.row.add([
-            response.property.name,
+            response.property.name_property,
             response.property.slug,
-            response.property.category.name,
+            response.property.category.name_category,
             '<img src="' + response.property.image + '" alt="Property Image" style="width: 100px;">',
             '<a href="javascript:void(0)" class="btn btn-warning btn-sm me-2" onclick="editCategory(' + response.property.id + ')">Edit</a>' +
             '<button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(' + response.property.id + ')">Delete</button>'
@@ -236,7 +236,7 @@ $.ajaxSetup({
         success: function(response) {
             if (response.success) {
                 $('#edit_property_id').val(response.property.id);
-                $('#edit_name').val(response.property.name);
+                $('#edit_name_property').val(response.property.name_property);
                 $('#edit_category_id').val(response.property.category.id);
                 $('#edit_alamat').val(response.property.alamat);
                 $('#editPropertyModal').modal('show');
@@ -272,7 +272,7 @@ $('#updatePropertyBtn').on('click', function() {
         console.log('No image file selected.');
     }
 
-    formData.append('name', $('#edit_name').val());
+    formData.append('name_property', $('#edit_name_property').val());
     formData.append('category_id', $('#edit_category_id').val());
     formData.append('alamat', $('#edit_alamat').val());
     formData.append('_method', 'PUT');
@@ -287,14 +287,12 @@ $('#updatePropertyBtn').on('click', function() {
         success: function(response) {
             console.log("Response from API:", response);
             if (response.success) {
-                // Find the row by property ID and update it
                 var row = $('#property-' + id);
-                row.find('td:eq(0)').text(response.property.name); 
-                row.find('td:eq(1)').text(response.property.slug); // Category
-                row.find('td:eq(2)').text(response.property.category.name); // Category
+                row.find('td:eq(0)').text(response.property.name_property); 
+                row.find('td:eq(1)').text(response.property.slug); 
+                row.find('td:eq(2)').text(response.property.category.name_category); 
                 row.find('td:eq(3)').html('<img src="' + response.property.image + '" alt="Property Image" style="width: 100px;">'); // Image
                 
-                // Show success message
                 Swal.fire({
                     icon: 'success',
                     title: 'Success!',

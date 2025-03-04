@@ -53,13 +53,13 @@ class CategoryController extends Controller
     {
         // dd($request->all());
         $validated = $request->validate([
-            'name' => 'required|string',
+            'name_category' => 'required|string',
         ]);
 
         $token = session('token');
         $ul = env('API_URL') . '/api/category';
         $response = Http::withToken($token)->post($ul, [
-            'name' => $validated['name'],
+            'name_category' => $validated['name_category'],
         ]);
         // $response = Http::post($ul, [
         //     'name' => $validated['name'],
@@ -117,14 +117,14 @@ class CategoryController extends Controller
     public function update(Request $request, string $id)
     {
         $validated = $request->validate([
-            'name' => 'required|string',
+            'name_category' => 'required|string',
         ]);
 
         $token = session('token');
         $url = env('API_URL') . '/api/category/' . $id;
 
         $response = Http::withToken($token)->put($url, [
-            'name' => $validated['name'],
+            'name_category' => $validated['name_category'],
         ]);
 
         if ($response->successful()) {
