@@ -61,11 +61,6 @@ class CategoryController extends Controller
         $response = Http::withToken($token)->post($ul, [
             'name_category' => $validated['name_category'],
         ]);
-        // $response = Http::post($ul, [
-        //     'name' => $validated['name'],
-        //     'slug' => $validated['slug'],
-        // ]);
-
         if ($response->successful()) {
             return response()->json([
                 'success' => true,

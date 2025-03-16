@@ -146,70 +146,6 @@
   </main>
   <!--end main wrapper-->
 
-  <button class="btn btn-grd btn-grd-primary position-fixed bottom-0 end-0 m-3 d-flex align-items-center gap-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop">
-    <i class="material-icons-outlined">tune</i>Customize
-  </button>
-  
-  <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="staticBackdrop">
-    <div class="offcanvas-header border-bottom h-70">
-      <div class="">
-        <h5 class="mb-0">Theme Customizer</h5>
-        <p class="mb-0">Customize your theme</p>
-      </div>
-      <a href="javascript:;" class="primaery-menu-close" data-bs-dismiss="offcanvas">
-        <i class="material-icons-outlined">close</i>
-      </a>
-    </div>
-    <div class="offcanvas-body">
-      <div>
-        <p>Theme variation</p>
-  
-        <div class="row g-3">
-          <div class="col-12 col-xl-6">
-            <input type="radio" class="btn-check" name="theme-options" id="BlueTheme">
-            <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="BlueTheme">
-              <span class="material-icons-outlined">contactless</span>
-              <span>Blue</span>
-            </label>
-          </div>
-          <div class="col-12 col-xl-6">
-            <input type="radio" class="btn-check" name="theme-options" id="LightTheme" checked>
-            <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="LightTheme">
-              <span class="material-icons-outlined">light_mode</span>
-              <span>Light</span>
-            </label>
-          </div>
-          <div class="col-12 col-xl-6">
-            <input type="radio" class="btn-check" name="theme-options" id="DarkTheme">
-            <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="DarkTheme">
-              <span class="material-icons-outlined">dark_mode</span>
-              <span>Dark</span>
-            </label>
-          </div>
-          <div class="col-12 col-xl-6">
-            <input type="radio" class="btn-check" name="theme-options" id="SemiDarkTheme">
-            <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="SemiDarkTheme">
-              <span class="material-icons-outlined">contrast</span>
-              <span>Semi Dark</span>
-            </label>
-          </div>
-          <div class="col-12 col-xl-6">
-            <input type="radio" class="btn-check" name="theme-options" id="BoderedTheme">
-            <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="BoderedTheme">
-              <span class="material-icons-outlined">border_style</span>
-              <span>Bordered</span>
-            </label>
-          </div>
-        </div><!--end row-->
-  
-      </div>
-    </div>
-  </div>
-
-  <!--start overlay-->
-  <div class="overlay btn-toggle"></div>
-  <!--end overlay-->
-
   <!-- Load jQuery First -->
   <script src="{{ asset('vertical/assets/js/jquery.min.js') }}"></script>
 
@@ -252,42 +188,6 @@
 	<script src="{{ asset('vertical/assets/plugins/fancy-file-uploader/jquery.iframe-transport.js') }}"></script>
 	<script src="{{ asset('vertical/assets/plugins/fancy-file-uploader/jquery.fancy-fileupload.js') }}"></script>
 	<script src="{{ asset('vertical/assets/plugins/Drag-And-Drop/dist/imageuploadify.min.js') }}"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-    // Cek apakah ada tema yang disimpan sebelumnya di localStorage
-    const savedTheme = localStorage.getItem("theme");
-    
-    if (savedTheme) {
-        // Jika ada, terapkan tema yang disimpan
-        document.body.classList.add(savedTheme);
-    }
-
-    // Pilih radio button berdasarkan tema yang disimpan
-    const themeOptions = document.getElementsByName("theme-options");
-    themeOptions.forEach(option => {
-        if (option.id === savedTheme) {
-            option.checked = true;
-        }
-    });
-
-    // Event listener untuk perubahan tema
-    themeOptions.forEach(option => {
-        option.addEventListener("change", function() {
-            if (this.checked) {
-                // Hapus kelas tema lama
-                document.body.classList.remove("blue-theme", "dark-theme", "light-theme", "semi-dark", "bordered-theme");
-                
-                // Tambahkan kelas tema baru
-                document.body.classList.add(this.id);
-
-                // Simpan pilihan tema di localStorage
-                localStorage.setItem("theme", this.id);
-            }
-        });
-    });
-});
-
-  </script>
   @yield('scripts')
 </body>
 

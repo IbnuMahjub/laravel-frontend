@@ -48,6 +48,7 @@ class DashboardController extends Controller
         $category_id = Http::withToken($token)->get($urlCategory);
 
         // dd($response->json());
+        // dd($category_id->json());
         return view('dashboard.test', [
             'title' => 'Dashboard',
             'active' => 'dashboard',

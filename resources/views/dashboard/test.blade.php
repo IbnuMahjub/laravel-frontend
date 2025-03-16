@@ -32,7 +32,7 @@
                           <select id="input7" class="form-select">
                             {{-- <option selected="">Choose...</option> --}}
                             @foreach ($properties as $item)
-                                <option value="{{ $item['id'] }}">{{ $item['name'] }}</option>
+                                <option value="{{ $item['id'] }}">{{ $item['name_category'] }}</option>
                             @endforeach
                           </select>
                         </div>
@@ -60,7 +60,7 @@
                 <select class="form-select @error('property_id') is-invalid @enderror" id="cobadua" data-placeholder="Choose one thing" name="property_id">
                   <option value="">Pilih</option>
                   @foreach ($properties as $item)
-                      <option value="{{ $item['id'] }}">{{ $item['name'] }}</option>
+                      <option value="{{ $item['id'] }}">{{ $item['name_category'] }}</option>
                   @endforeach
                 </select>
                 @error('property_id')
