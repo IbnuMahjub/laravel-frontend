@@ -3,7 +3,7 @@
 @section('content')
 <div class="card">
     <div class="card-body p-4">
-        <h5 class="mb-4 text-primary">User Registration Form</h5>
+        <h5 class="mb-4 text-primary">From {{ $title }}</h5>
         <form action="{{ route('unit.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
@@ -13,7 +13,7 @@
                         <select class="form-control @error('property_id') is-invalid @enderror" id="property_id" name="property_id" data-placeholder="Choose one thing">
                             <option value="">Select Property</option>
                             @foreach ($properties as $property)
-                                <option value="{{ $property['id'] }}" {{ old('property_id') == $property['id'] ? 'selected' : '' }}>{{ $property['name'] }}</option>
+                                <option value="{{ $property['id'] }}" {{ old('property_id') == $property['id'] ? 'selected' : '' }}>{{ $property['name_property'] }}</option>
                             @endforeach
                         </select>
                         @error('property_id')

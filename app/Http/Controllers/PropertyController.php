@@ -42,7 +42,7 @@ class PropertyController extends Controller
     }
 
 
-    public function showProperty($id)
+    public function showProperty($slug)
     {
         $breadcrumbTitle = 'Detail Property';
         $breadcrumbs = [
@@ -51,7 +51,7 @@ class PropertyController extends Controller
         ];
         $this->generateBreadcrumb($breadcrumbs, $breadcrumbTitle);
         $token = session('token');
-        $url = env('API_URL') . '/api/property/' . $id;
+        $url = env('API_URL') . '/api/property/' . $slug;
         $urlCategory = env('API_URL') . '/api/category';
         $response = Http::withToken($token)->get($url);
         $category_id = Http::withToken($token)->get($urlCategory);
@@ -77,7 +77,7 @@ class PropertyController extends Controller
             'name_property' => 'required|string',
             'alamat' => 'required|string',
             'category_id' => 'required|integer',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $token = session('token');
@@ -232,7 +232,7 @@ class PropertyController extends Controller
         $response = Http::withToken($token)->get($url);
         $responseProperty = Http::withToken($token)->get($urlProperty);
         // dd($response->json());
-        // dd($responseProperty->json()['data']);
+        // dd($responseProperty->json()['data']);s
         if ($response->successful()) {
             return view('dashboard.unit.create', [
                 'title' => 'Unit',
@@ -338,7 +338,8 @@ class PropertyController extends Controller
             'deskripsi' => 'required|string',
             'harga_unit' => 'required|integer',
             'jumlah_kamar' => 'required|integer',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Not required if no new images are uploaded
+            'images.*' => 'string|nullable',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $token = session('token');
@@ -353,15 +354,14 @@ class PropertyController extends Controller
             '_method' => 'PUT',
         ];
 
-        // Initialize request object with token
         $requestObj = Http::withToken($token);
 
-        // Attach images if they exist
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $requestObj->attach('images[]', fopen($image->getRealPath(), 'r'), $image->getClientOriginalName());
             }
         }
+
 
         $response = $requestObj->post($url, $data);
 
@@ -374,12 +374,7 @@ class PropertyController extends Controller
 
         // Handle the response
         if ($response->successful()) {
-            Log::info('API Response Successful', $responseData['data'] ?? []);
-            session()->flash('success', 'Unit berhasil Diupdate!');
-            return response()->json([
-                'success' => true,
-                'unit' => $responseData['data'] ?? [],
-            ]);
+            return redirect('/unit')->with('success', 'Unit berhasil Diupdate!');
         } else {
             return redirect('/unit')->with('error', 'Unit gagal diupdate!');
             // return response()->json([
@@ -388,7 +383,6 @@ class PropertyController extends Controller
             // ]);
         }
     }
-
     public function destroyUnit($id)
     {
         $token = session('token');

@@ -11,9 +11,8 @@
     </div>
   </div>
   <div class="sidebar-nav">
-    <!--navigation-->
     <ul class="metismenu" id="sidenav">
-      <li>
+      <li class="{{ request()->is('dashboard') || request()->is('profile') ? 'mm-active' : '' }}">
         <a href="/dashboard">
           <div class="parent-icon"><i class="material-icons-outlined">home</i></div>
           <div class="menu-title">Dashboard</div>
@@ -38,6 +37,5 @@
         </ul>     
       </li>
     </ul>
-    <!--end navigation-->
   </div>
 </aside>

@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,12 +19,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('home', [
-        'title' => 'Home',
-        'active' => 'home'
-    ]);
-});
+// Route::get('/', function () {
+//     return view('home', [
+//         'title' => 'Home',
+//         'active' => 'home'
+//     ]);
+// });
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/properties/{slug}', [HomeController::class, 'showProperties']);
 
 // Route::get('/login', function () {
 //     return view('login');
@@ -55,10 +60,12 @@ Route::get('/test', [DashboardController::class, 'test'])->name('test');
 Route::post('/test', [DashboardController::class, 'storeTest']);
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('check.token');
+Route::get('/profile', [ProfileController::class, 'profile'])->name('profile')->middleware('check.token');
+Route::put('/updateProfile', [ProfileController::class, 'updateProfile'])->name('updateProfile')->middleware('check.token');
 Route::resource('/category', CategoryController::class)->middleware('check.token');
 
 Route::get('/property', [PropertyController::class, 'index'])->name('property.index')->middleware('check.token');
-Route::get('/property/{id}', [PropertyController::class, 'showProperty'])->name('property.show')->middleware('check.token');
+Route::get('/property/{slug}', [PropertyController::class, 'showProperty'])->name('property.show')->middleware('check.token');
 Route::post('/property', [PropertyController::class, 'storeProperty'])->name('property.store')->middleware('check.token');
 Route::get('/property/{id}/edit', [PropertyController::class, 'editProperty'])->name('property.edit')->middleware('check.token');
 Route::put('/property/{id}', [PropertyController::class, 'updateProperty'])->name('property.update')->middleware('check.token');
