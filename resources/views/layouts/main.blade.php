@@ -14,6 +14,10 @@
   <!--plugins-->
   <link href="{{ asset('landing/assets/plugins/OwlCarousel/css/owl.carousel.min.css') }}" rel="stylesheet">
   <link rel="stylesheet" href="{{ asset('landing/assets/plugins/lightbox/dist/css/glightbox.min.css') }}">
+  
+  <!-- SweetAlert CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.19/dist/sweetalert2.min.css" rel="stylesheet">
+  
   <!--bootstrap css-->
   <link href="{{ asset('landing/assets/css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -51,7 +55,7 @@
         <div class="col-12 col-xl-4">
           <div class="footer-widget-1">
             <div class="footer-logo mb-4">
-              <img src="landing/assets/images/logo1.png" width="160" alt="">
+              <img src="{{ asset('landing/assets/images/nobg.png') }}" width="200" alt="">
             </div>
             <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
               Explicabo voluptatem mollitia et repellat qui dolorum quasi.</p>
@@ -60,10 +64,10 @@
             <p class="mb-0"><strong>Email: </strong>info@example.com</p>
             <div class="play-store-images d-flex align-items-center gap-3 mt-4">
                <a href="javascript:;">
-                 <img src="landing/assets/images/google-play-store.png" width="160" alt="">
+                 <img src="{{ asset('landing/assets/images/google-play-store.png')}} " width="160" alt="">
                </a>
                <a href="javascript:;">
-                <img src="landing/assets/images/apple-store.png" width="160" alt="">
+                <img src="{{ asset('landing/assets/images/apple-store.png') }}" width="160" alt="">
               </a>
             </div>
           </div>
@@ -219,99 +223,17 @@
 
   <!--plugins-->
   <script src="{{ asset('landing/assets/js/jquery.min.js') }}"></script>
+
+  <!-- SweetAlert JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.19/dist/sweetalert2.min.js"></script>
+
   <!--plugins-->
   <script src="{{ asset('landing/assets/plugins/OwlCarousel/js/owl.carousel.min.js') }}"></script>
   <script src="{{ asset('landing/assets/plugins/OwlCarousel/js/owl.carousel2.thumbs.min.js') }}"></script>
   <script src="{{ asset('landing/assets/js/main.js') }}"></script>
 
   <script src="{{ asset('landing/assets/plugins/lightbox/dist/js/glightbox.min.js') }}"></script>
-  
-  <script>
-    var lightbox = GLightbox();
-    lightbox.on('open', (target) => {
-      console.log('lightbox opened');
-    });
-    var lightboxDescription = GLightbox({
-      selector: '.glightbox2'
-    });
-    var lightboxVideo = GLightbox({
-      selector: '.glightbox3'
-    });
-    lightboxVideo.on('slide_changed', ({ prev, current }) => {
-      console.log('Prev slide', prev);
-      console.log('Current slide', current);
-
-      const { slideIndex, slideNode, slideConfig, player } = current;
-
-      if (player) {
-        if (!player.ready) {
-          // If player is not ready
-          player.on('ready', (event) => {
-            // Do something when video is ready
-          });
-        }
-
-        player.on('play', (event) => {
-          console.log('Started play');
-        });
-
-        player.on('volumechange', (event) => {
-          console.log('Volume change');
-        });
-
-        player.on('ended', (event) => {
-          console.log('Video ended');
-        });
-      }
-    });
-
-    var lightboxInlineIframe = GLightbox({
-      selector: '.glightbox4'
-    });
-
-  </script>
-
-  <script>
-
-    $('.clients-shops').owlCarousel({
-      loop: true,
-      margin: 24,
-      responsiveClass: true,
-      nav: false,
-      navText: [
-        "<i class='bx bx-chevron-left'></i>",
-        "<i class='bx bx-chevron-right' ></i>"
-      ],
-      autoplay: true,
-      autoplayTimeout: 3000,
-      dots: false,
-      responsive: {
-        0: {
-          nav: false,
-          items: 1
-        },
-        576: {
-          nav: false,
-          items: 2
-        },
-        768: {
-          nav: false,
-          items: 3
-        },
-        1024: {
-          nav: false,
-          items: 3
-        },
-        1366: {
-          items: 4
-        },
-        1400: {
-          items: 5
-        }
-      },
-    })
-
-  </script>
+  @yield('scripts')
 
 </body>
 

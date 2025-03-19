@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
+
 class LoginController extends Controller
 {
     public function index()
@@ -151,9 +152,8 @@ class LoginController extends Controller
             }
             return back()->with('loginError', 'An unknown error occurred. Please try again.');
         } catch (\Throwable $th) {
-                return redirect('/login');
-            }
-        
+            return redirect('/login');
+        }
     }
 
     public function sendEmail(Request $request)
@@ -171,7 +171,6 @@ class LoginController extends Controller
         } catch (\Throwable $th) {
             return back()->with('loginError', 'Maaf Sedang Ada gangguan');
         }
-        
     }
 
     // public function storeRegister(Request $request)
@@ -224,6 +223,4 @@ class LoginController extends Controller
 
         return redirect('/login')->with('success', 'Register berhasil!');
     }
-
-
 }

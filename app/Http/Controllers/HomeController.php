@@ -23,11 +23,11 @@ class HomeController extends Controller
 
     public function showProperties($slug)
     {
-        $url = env('API_URL') . '/api/property/' . $slug;
+        $url = env('API_URL') . '/api/data_property/' . $slug;
         $response = Http::get($url);
         // dd($response->json()['data']);
         if ($response->successful()) {
-            return view('home', [
+            return view('detail', [
                 'title' => 'Home',
                 'data' => $response->json()['data']
             ]);
