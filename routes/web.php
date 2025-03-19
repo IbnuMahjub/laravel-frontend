@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
 use Illuminate\Support\Facades\Route;
@@ -78,3 +79,9 @@ Route::post('/unit', [PropertyController::class, 'StoreUnit'])->name('unit.store
 Route::get('/unit/{id}/edit', [PropertyController::class, 'editUnit'])->name('unit.edit')->middleware('check.token');
 Route::put('/unit/{id}', [PropertyController::class, 'updateUnit'])->name('unit.update')->middleware('check.token');
 Route::delete('/unit/{id}', [PropertyController::class, 'destroyUnit'])->name('unit.destroy')->middleware('check.token');
+
+
+Route::post('/booking', [OrderController::class, 'storeBooking']);
+// Route::get('/booking/{kode_pemesanan}', [OrderController::class, 'get_data_booking']);
+Route::get('/booking/{kode_pemesanan}', [OrderController::class, 'get_data_booking'])
+    ->name('booking.detail');

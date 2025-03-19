@@ -72,7 +72,6 @@ class PropertyController extends Controller
 
     public function storeProperty(Request $request)
     {
-
         $validated = $request->validate([
             'name_property' => 'required|string',
             'alamat' => 'required|string',

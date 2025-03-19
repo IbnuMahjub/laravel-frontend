@@ -14,6 +14,10 @@
   <!--plugins-->
   <link href="{{ asset('landing/assets/plugins/OwlCarousel/css/owl.carousel.min.css') }}" rel="stylesheet">
   <link rel="stylesheet" href="{{ asset('landing/assets/plugins/lightbox/dist/css/glightbox.min.css') }}">
+  
+  <!-- SweetAlert CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.19/dist/sweetalert2.min.css" rel="stylesheet">
+  
   <!--bootstrap css-->
   <link href="{{ asset('landing/assets/css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -51,7 +55,7 @@
         <div class="col-12 col-xl-4">
           <div class="footer-widget-1">
             <div class="footer-logo mb-4">
-              <img src="{{ asset('landing/assets/images/logo1.png') }}" width="160" alt="">
+              <img src="{{ asset('landing/assets/images/nobg.png') }}" width="200" alt="">
             </div>
             <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
               Explicabo voluptatem mollitia et repellat qui dolorum quasi.</p>
@@ -219,6 +223,10 @@
 
   <!--plugins-->
   <script src="{{ asset('landing/assets/js/jquery.min.js') }}"></script>
+
+  <!-- SweetAlert JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.19/dist/sweetalert2.min.js"></script>
+
   <!--plugins-->
   <script src="{{ asset('landing/assets/plugins/OwlCarousel/js/owl.carousel.min.js') }}"></script>
   <script src="{{ asset('landing/assets/plugins/OwlCarousel/js/owl.carousel2.thumbs.min.js') }}"></script>
