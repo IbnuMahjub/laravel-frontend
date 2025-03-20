@@ -82,6 +82,8 @@ Route::delete('/unit/{id}', [PropertyController::class, 'destroyUnit'])->name('u
 
 
 Route::post('/booking', [OrderController::class, 'storeBooking']);
-// Route::get('/booking/{kode_pemesanan}', [OrderController::class, 'get_data_booking']);
 Route::get('/booking/{kode_pemesanan}', [OrderController::class, 'get_data_booking'])
     ->name('booking.detail');
+
+Route::get('/invoice/{kode_pemesanan}', [OrderController::class, 'get_invoice'])
+    ->name('invoice.detail');

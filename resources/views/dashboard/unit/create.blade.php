@@ -35,14 +35,6 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label for="deskripsi" class="form-label">Deskripsi</label>
-                        <input type="text" class="form-control @error('deskripsi') is-invalid @enderror" id="deskripsi" name="deskripsi" value="{{ old('deskripsi') }}">
-                        @error('deskripsi')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    
-                    <div class="mb-3">
                         <label for="jumlah_kamar" class="form-label">Jumlah Kamar</label>
                         <input type="number" class="form-control @error('jumlah_kamar') is-invalid @enderror" id="jumlah_kamar" name="jumlah_kamar" value="{{ old('jumlah_kamar') }}">
                         @error('jumlah_kamar')
@@ -69,6 +61,14 @@
                             </div>
                         @enderror
                     </div>
+                    <div class="mb-3">
+                        <label for="deskripsi" class="form-label">Deskripsi</label>
+                        <textarea class="form-control @error('deskripsi') is-invalid @enderror" id="deskripsi" name="deskripsi" rows="4">{{ old('deskripsi') }}</textarea>
+                        @error('deskripsi')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     
                     {{-- <div class="card mb-3">
                         <div class="card-body bg-dark @error('images') is-invalid @enderror">
