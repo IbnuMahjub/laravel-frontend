@@ -28,6 +28,8 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::post('/set-theme', [HomeController::class, 'setTheme']);
+
 Route::get('/properties/{slug}', [HomeController::class, 'showProperties']);
 
 // Route::get('/login', function () {

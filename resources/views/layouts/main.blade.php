@@ -1,17 +1,17 @@
 <!doctype html>
-<html lang="en" data-bs-theme="blue-theme">
+  
+  {{-- <html lang="en" data-bs-theme="dark"> --}}
+  <html lang="en" data-bs-theme="{{ session('theme', 'blue-theme') }}">
+
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Maxton | {{ $title }}</title>
-  <!--favicon-->
   <link rel="icon" href="{{ asset('landing/assets/images/favicon-32x32.png') }}" type="image/png">
-  <!-- loader-->
   <link href="{{ asset('landing/assets/css/pace.min.css')}}" rel="stylesheet">
   <script src="{{ asset('landing/assets/js/pace.min.js') }}"></script>
 
-  <!--plugins-->
   <link href="{{ asset('landing/assets/plugins/OwlCarousel/css/owl.carousel.min.css') }}" rel="stylesheet">
   <link rel="stylesheet" href="{{ asset('landing/assets/plugins/lightbox/dist/css/glightbox.min.css') }}">
   
@@ -30,6 +30,31 @@
   <link href="{{ asset('landing/sass/semi-dark.css') }}" rel="stylesheet">
   <link href="{{ asset('landing/sass/blue-theme.css') }}" rel="stylesheet">
   <link href="{{ asset('landing/sass/bordered-theme.css') }}" rel="stylesheet">
+
+  <style>
+    .running-text {
+      white-space: nowrap;
+      overflow: hidden;
+      display: block;
+    }
+
+    .running-text span {
+      display: inline-block;
+      padding-left: 100%;
+      animation: runningText 10s linear infinite;
+    }
+
+    @keyframes runningText {
+      from {
+        transform: translateX(100%);
+      }
+      to {
+        transform: translateX(-100%);
+      }
+    }
+
+  </style>
+
 </head>
 
 <body>
@@ -233,6 +258,34 @@
   <script src="{{ asset('landing/assets/js/main.js') }}"></script>
 
   <script src="{{ asset('landing/assets/plugins/lightbox/dist/js/glightbox.min.js') }}"></script>
+ 
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      let themeRadios = document.querySelectorAll("input[name='theme-options']");
+      themeRadios.forEach(input => {
+        input.addEventListener("change", function () {
+          let newTheme = this.id.replace("Theme", "-theme").toLowerCase();
+          document.documentElement.setAttribute("data-bs-theme", newTheme);
+
+          fetch("{{ url('/set-theme') }}", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({ theme: newTheme })
+          }).then(response => response.json())
+            .then(data => console.log(data));
+        });
+
+        if ("{{ session('theme', 'blue-theme') }}" === input.id.replace("Theme", "-theme").toLowerCase()) {
+          input.checked = true;
+        }
+      });
+    });
+  </script>
+
+
   @yield('scripts')
 
 </body>
