@@ -1,5 +1,7 @@
 <!doctype html>
-<html lang="en" data-bs-theme="dark">
+{{-- <html lang="en" data-bs-theme="dark"> --}}
+  <html lang="en" data-bs-theme="{{ session('theme', 'blue-theme') }}">
+
 
 
 <head>
@@ -295,36 +297,46 @@
 
         <div class="row g-3">
           <div class="col-12 col-xl-6">
-            <input type="radio" class="btn-check" name="theme-options" id="BlueTheme" checked>
-            <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="BlueTheme">
+            <input type="radio" class="btn-check" name="theme-options" id="BlueTheme" value="blue-theme">
+            <label
+              class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4"
+              for="BlueTheme">
               <span class="material-icons-outlined">contactless</span>
               <span>Blue</span>
             </label>
           </div>
           <div class="col-12 col-xl-6">
-            <input type="radio" class="btn-check" name="theme-options" id="LightTheme">
-            <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="LightTheme">
+            <input type="radio" class="btn-check" name="theme-options" id="LightTheme" value="light">
+            <label
+              class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4"
+              for="LightTheme">
               <span class="material-icons-outlined">light_mode</span>
               <span>Light</span>
             </label>
           </div>
           <div class="col-12 col-xl-6">
-            <input type="radio" class="btn-check" name="dark" id="DarkTheme">
-            <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="DarkTheme">
+            <input type="radio" class="btn-check" name="theme-options" id="DarkTheme" value="dark">
+            <label
+              class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4"
+              for="DarkTheme">
               <span class="material-icons-outlined">dark_mode</span>
               <span>Dark</span>
             </label>
           </div>
           <div class="col-12 col-xl-6">
-            <input type="radio" class="btn-check" name="theme-options" id="SemiDarkTheme">
-            <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="SemiDarkTheme">
+            <input type="radio" class="btn-check" name="theme-options" id="SemiDarkTheme" value="semi-dark">
+            <label
+              class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4"
+              for="SemiDarkTheme">
               <span class="material-icons-outlined">contrast</span>
               <span>Semi Dark</span>
             </label>
           </div>
           <div class="col-12 col-xl-6">
-            <input type="radio" class="btn-check" name="theme-options" id="BoderedTheme">
-            <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="BoderedTheme">
+            <input type="radio" class="btn-check" name="theme-options" id="BoderedTheme" value="bordered-theme">
+            <label
+              class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4"
+              for="BoderedTheme">
               <span class="material-icons-outlined">border_style</span>
               <span>Bordered</span>
             </label>
@@ -381,6 +393,30 @@
 	<script src="{{ asset('vertical/assets/plugins/fancy-file-uploader/jquery.iframe-transport.js') }}"></script>
 	<script src="{{ asset('vertical/assets/plugins/fancy-file-uploader/jquery.fancy-fileupload.js') }}"></script>
 	<script src="{{ asset('vertical/assets/plugins/Drag-And-Drop/dist/imageuploadify.min.js') }}"></script>
+
+   <script>
+  document.querySelectorAll('input[name="theme-options"]').forEach((radio) => {
+    radio.addEventListener('change', function() {
+      let selectedTheme = this.value;
+
+      // Kirim ke backend via AJAX atau fetch API
+      fetch("{{ route('theme.update') }}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-TOKEN": "{{ csrf_token() }}"
+        },
+        body: JSON.stringify({ theme: selectedTheme })
+      }).then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            document.documentElement.setAttribute("data-bs-theme", selectedTheme);
+          }
+        });
+    });
+  });
+</script>
+
   @yield('scripts')
 </body>
 

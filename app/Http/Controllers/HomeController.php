@@ -10,8 +10,8 @@ class HomeController extends Controller
 {
     public function setTheme(Request $request)
     {
-        $theme = $request->input('theme', 'blue-theme'); // Default blue-theme jika tidak ada input
-        Session::put('theme', $theme);
+        $theme = $request->input('theme', 'blue');
+        session(['theme' => $theme]);
         return response()->json(['success' => true]);
     }
 

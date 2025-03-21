@@ -1,14 +1,14 @@
 <!doctype html>
   
-  {{-- <html lang="en" data-bs-theme="dark"> --}}
+  {{-- <html lang="en" data-bs-theme="semi-dark"> --}}
   <html lang="en" data-bs-theme="{{ session('theme', 'blue-theme') }}">
 
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Maxton | {{ $title }}</title>
-  <link rel="icon" href="{{ asset('landing/assets/images/favicon-32x32.png') }}" type="image/png">
+  <title>Property MRXNUNU | {{ $title }}</title>
+  <link rel="icon" href="{{ asset('landing/assets/images/avatar.png') }}" type="image/png">
   <link href="{{ asset('landing/assets/css/pace.min.css')}}" rel="stylesheet">
   <script src="{{ asset('landing/assets/js/pace.min.js') }}"></script>
 
@@ -192,7 +192,7 @@
 
         <div class="row g-3">
           <div class="col-12 col-xl-6">
-            <input type="radio" class="btn-check" name="theme-options" id="BlueTheme" checked>
+            <input type="radio" class="btn-check" name="theme-options" id="BlueTheme" value="blue-theme">
             <label
               class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4"
               for="BlueTheme">
@@ -201,7 +201,7 @@
             </label>
           </div>
           <div class="col-12 col-xl-6">
-            <input type="radio" class="btn-check" name="theme-options" id="LightTheme">
+            <input type="radio" class="btn-check" name="theme-options" id="LightTheme" value="light">
             <label
               class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4"
               for="LightTheme">
@@ -210,7 +210,7 @@
             </label>
           </div>
           <div class="col-12 col-xl-6">
-            <input type="radio" class="btn-check" name="theme-options" id="DarkTheme">
+            <input type="radio" class="btn-check" name="theme-options" id="DarkTheme" value="dark">
             <label
               class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4"
               for="DarkTheme">
@@ -219,7 +219,7 @@
             </label>
           </div>
           <div class="col-12 col-xl-6">
-            <input type="radio" class="btn-check" name="theme-options" id="SemiDarkTheme">
+            <input type="radio" class="btn-check" name="theme-options" id="SemiDarkTheme" value="semi-dark">
             <label
               class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4"
               for="SemiDarkTheme">
@@ -228,7 +228,7 @@
             </label>
           </div>
           <div class="col-12 col-xl-6">
-            <input type="radio" class="btn-check" name="theme-options" id="BoderedTheme">
+            <input type="radio" class="btn-check" name="theme-options" id="BoderedTheme" value="bordered-theme">
             <label
               class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4"
               for="BoderedTheme">
@@ -259,7 +259,7 @@
 
   <script src="{{ asset('landing/assets/plugins/lightbox/dist/js/glightbox.min.js') }}"></script>
  
-  <script>
+  {{-- <script>
     document.addEventListener("DOMContentLoaded", function () {
       let themeRadios = document.querySelectorAll("input[name='theme-options']");
       themeRadios.forEach(input => {
@@ -283,7 +283,31 @@
         }
       });
     });
-  </script>
+  </script> --}}
+
+  <script>
+  document.querySelectorAll('input[name="theme-options"]').forEach((radio) => {
+    radio.addEventListener('change', function() {
+      let selectedTheme = this.value;
+
+      // Kirim ke backend via AJAX atau fetch API
+      fetch("{{ route('theme.update') }}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-TOKEN": "{{ csrf_token() }}"
+        },
+        body: JSON.stringify({ theme: selectedTheme })
+      }).then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            document.documentElement.setAttribute("data-bs-theme", selectedTheme);
+          }
+        });
+    });
+  });
+</script>
+
 
 
   @yield('scripts')

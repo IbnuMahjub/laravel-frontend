@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::post('/set-theme', [HomeController::class, 'setTheme']);
+Route::post('/update-theme', [HomeController::class, 'setTheme'])->name('theme.update');
 
 Route::get('/properties/{slug}', [HomeController::class, 'showProperties']);
 
