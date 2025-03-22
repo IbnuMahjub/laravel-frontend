@@ -290,7 +290,6 @@
     radio.addEventListener('change', function() {
       let selectedTheme = this.value;
 
-      // Kirim ke backend via AJAX atau fetch API
       fetch("{{ route('theme.update') }}", {
         method: "POST",
         headers: {

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DataOrderController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrderController;
@@ -55,6 +56,14 @@ Route::post('/resetpw', [LoginController::class, 'resetPassword'])->name('pw.res
 Route::post('/api/login', [LoginController::class, 'authenticate']);
 Route::post('/api/logout', [LoginController::class, 'logout']);
 
+
+Route::post('/booking', [OrderController::class, 'storeBooking']);
+Route::get('/booking/{kode_pemesanan}', [OrderController::class, 'get_data_booking'])
+    ->name('booking.detail');
+
+Route::get('/invoice/{kode_pemesanan}', [OrderController::class, 'get_invoice'])
+    ->name('invoice.detail');
+
 // Route::get('/dashboard', function () {
 //     return view('dashboard.index');
 // });
@@ -83,9 +92,4 @@ Route::put('/unit/{id}', [PropertyController::class, 'updateUnit'])->name('unit.
 Route::delete('/unit/{id}', [PropertyController::class, 'destroyUnit'])->name('unit.destroy')->middleware('check.token');
 
 
-Route::post('/booking', [OrderController::class, 'storeBooking']);
-Route::get('/booking/{kode_pemesanan}', [OrderController::class, 'get_data_booking'])
-    ->name('booking.detail');
-
-Route::get('/invoice/{kode_pemesanan}', [OrderController::class, 'get_invoice'])
-    ->name('invoice.detail');
+Route::get('/dataorderan', [DataOrderController::class, 'index'])->middleware('check.token');
