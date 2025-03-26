@@ -36,6 +36,12 @@
           </li>
         </ul>     
       </li>
+      <li class="">
+        <a href="/dataorderan">
+          <div class="parent-icon"><i class="material-icons-outlined">data_thresholding</i></div>
+          <div class="menu-title">Data Order</div>
+        </a>
+      </li>
     </ul>
   </div>
 </aside>

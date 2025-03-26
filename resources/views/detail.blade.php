@@ -3,30 +3,23 @@
 @section('content')
 <div class="main-content">
   <section class="py-5" id="villa-list">
-    {{-- @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif --}}
-
-    <div class="container py-4 px-4 px-lg-0">
-      <div class="text-center mb-5">
-        <h2 class="fw-bold">{{ $data['name_property'] }}</h2>
-        <p class="text-muted">{{ $data['name_category'] ?? 'Kategori tidak tersedia' }}</p>
-      </div>
-
-      <div class="row justify-content-center mb-4">
-        <div class="col-lg-8">
+    <div class="container py-4">
+      <div class="row">
+        <div class="col-lg-6">
+          <h2 class="fw-bold">{{ $data['name_property'] }}</h2>
+          <p class="text-grey">{{ $data['name_category'] ?? 'Kategori tidak tersedia' }}</p>
           <img src="{{ $data['image'] ?? asset('images/default.jpg') }}" class="img-fluid rounded shadow" alt="Property Image">
+        </div>
+        <div class="col-lg-6">
+          <h2 class="fw-bold">Lokasi Properti</h2>
+          <p class="text-grey">{{ $data['alamat'] }}</p>
+          {{-- <p class="fw-bold text-primary">Rp {{ number_format($data['harga_unit'], 0, ',', '.') }} / malam</p> --}}
+          <div id="map" style="height: 400px;"></div>
         </div>
       </div>
 
-      <h3 class="mb-4">Daftar Unit</h3>
-      <div class="row">
+      <h3 class="mt-5">Daftar Unit</h3>
+      <div class="row g-4">
         @forelse ($data['units'] as $unit)
           <div class="col-md-4">
             <div class="card shadow-sm border-0">
@@ -46,10 +39,9 @@
                 </button>
               </div>
 
-              {{-- <pre>{{ var_dump(session()->all()) }}</pre> --}}
               <div class="card-body">
                 <h5 class="card-title">{{ $unit['name_property'] }}</h5>
-                <p class="text-white">Tipe: {{ $unit['tipe'] }}</p>
+                <p class="text-muted">Tipe: {{ $unit['tipe'] }}</p>
                 <p class="fw-bold text-primary">Rp {{ number_format($unit['harga_unit'], 0, ',', '.') }} / malam</p>
                 <p><i class="bi bi-door-closed"></i> {{ $unit['jumlah_kamar'] }} Kamar</p>
                 <p class="text-muted">{{ Str::limit($unit['deskripsi'], 100) }}</p>
@@ -64,7 +56,6 @@
                   <input type="hidden" name="user_id" value="{{ session('user.id', '') }}">
                   <input type="hidden" name="username" value="{{ session('user.username', '') }}">
 
-                  
                   <div class="mb-2">
                     <label for="checkin_{{ $unit['id'] }}" class="form-label @error('tanggal_check_in') is-invalid @enderror">Tanggal Check-in</label>
                     <input type="date" id="checkin_{{ $unit['id'] }}" name="tanggal_check_in" class="form-control">
@@ -83,7 +74,6 @@
                         {{ $message }}
                       </div>
                     @enderror
-
                   </div>
 
                   <div class="mb-3">
@@ -91,11 +81,10 @@
                     <input type="text" id="jumlah_hari_{{ $unit['id'] }}" name="jumlah_hari" class="form-control" readonly>
                   </div>
 
-                 <div class="mb-3">
+                  <div class="mb-3">
                     <label for="catatan" class="form-label">Catatan</label>
                     <textarea id="catatan" name="catatan" class="form-control" rows="3" style="resize: none;"></textarea>
                   </div>
-
 
                   <button type="submit" class="btn btn-primary btn-sm">Booking</button>
                 </form>
@@ -114,23 +103,25 @@
 @section('scripts')
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-     @if(session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Sukses!',
-            text: "{{ session('success') }}",
-            showConfirmButton: true
-        });
+    @if(session('success'))
+      Swal.fire({
+        icon: 'success',
+        title: 'Sukses!',
+        text: "{{ session('success') }}",
+        showConfirmButton: true
+      });
     @endif
 
     @if(session('error'))
-        Swal.fire({
-            icon: 'error',
-            title: 'Gagal!',
-            text: "{{ session('error') }}",
-            showConfirmButton: true
-        });
+      Swal.fire({
+        icon: 'error',
+        title: 'Gagal!',
+        text: "{{ session('error') }}",
+        showConfirmButton: true
+      });
     @endif
+
+    // Initialize date input listeners
     document.querySelectorAll("input[type='date']").forEach(function (input) {
       input.addEventListener("change", function () {
         let unitId = this.id.split("_")[1];
@@ -153,6 +144,16 @@
         }
       });
     });
+
+    // Initialize Leaflet 
+    var map = L.map('map').setView([{{ $data['latitude'] }}, {{ $data['longitude'] }}], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      // attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    var marker = L.marker([{{ $data['latitude'] }}, {{ $data['longitude'] }}]).addTo(map);
+    marker.bindPopup("<b>{{ $data['name_property'] }}</b><br>{{ $data['kota'] }}, {{ $data['negara'] }}").openPopup();
   });
 </script>
 @endsection

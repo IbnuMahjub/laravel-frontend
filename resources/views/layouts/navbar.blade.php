@@ -28,13 +28,13 @@
     <div class="offcanvas-body p-0 primary-menu">
       <ul class="navbar-nav align-items-center mx-auto gap-0 gap-xl-1">
         <li class="nav-item">
-          <a class="nav-link" href="#home">
+          <a class="nav-link" href="/">
             <div class="parent-icon"><i class="material-icons-outlined">home</i>
             </div>
             <div class="menu-title">Home</div>
           </a>
         </li>
-        <li class="nav-item">
+        {{-- <li class="nav-item">
           <a class="nav-link" href="#About">
             <div class="parent-icon"><i class="material-icons-outlined">info</i>
             </div>
@@ -124,7 +124,7 @@
               </ul>
             </li>
           </ul>
-        </li>
+        </li> --}}
       </ul>
     </div>
   </div>

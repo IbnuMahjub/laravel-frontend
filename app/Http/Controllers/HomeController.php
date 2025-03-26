@@ -4,9 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
 
 class HomeController extends Controller
 {
+    public function setTheme(Request $request)
+    {
+        $theme = $request->input('theme', 'blue');
+        session(['theme' => $theme]);
+        return response()->json(['success' => true]);
+    }
+
     public function index()
     {
 
