@@ -31,6 +31,17 @@
   <link href="{{ asset('landing/sass/blue-theme.css') }}" rel="stylesheet">
   <link href="{{ asset('landing/sass/bordered-theme.css') }}" rel="stylesheet">
 
+   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <!-- Link CSS untuk Routing Machine -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+
+  <!-- Link JS untuk Leaflet -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <!-- Link JS untuk Routing Machine -->
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
   <style>
     .running-text {
       white-space: nowrap;

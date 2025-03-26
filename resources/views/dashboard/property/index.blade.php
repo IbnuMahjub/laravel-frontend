@@ -47,9 +47,9 @@
   </div>
 </div>
 
-{{-- Add Property Modal --}}
+
 <div class="modal fade" id="propertyModal" tabindex="-1" aria-labelledby="propertyModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="propertyModalLabel">Add Property</h5>
@@ -58,47 +58,84 @@
       <div class="modal-body">
         <form id="propertyForm">
           @csrf
-          <div class="mb-3">
-            <label for="name" class="form-label">Name Property</label>
-            <input type="text" class="form-control @error('name_property') is-invalid @enderror" id="name_property" name="name_property">
-            @error('name_property')
-                <div class="invalid-feedback">
-                    {{ $message }}
-                </div>
-            @enderror
-          </div>
-          <div class="mb-3">
-            <label for="category_id" class="form-label">Category</label>
-            <select class="form-control @error('category_id') is-invalid @enderror" id="category_id" name="category_id" data-placeholder="Choose one thing">
-              <option value="">Select Category</option>
-              @foreach ($categories as $category)
-                <option value="{{ $category['id'] }}">{{ $category['name_category'] }}</option>
-              @endforeach
-            </select>
-             @error('category_id')
-                    <div class="invalid-feedback">
-                        {{ $message }}
-                    </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="name_property" class="form-label">Name Property</label>
+              <input type="text" class="form-control @error('name_property') is-invalid @enderror" id="name_property" name="name_property">
+              @error('name_property')
+                  <div class="invalid-feedback">
+                      {{ $message }}
+                  </div>
               @enderror
-          </div>
-          <div class="mb-3">
-            <label for="alamat" class="form-label">Alamat</label>
-            <input type="text" class="form-control @error('alamat') is-invalid @enderror" id="alamat" name="alamat">
-            @error('alamat')
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="category_id" class="form-label">Category</label>
+              <select class="form-control @error('category_id') is-invalid @enderror" id="category_id" name="category_id">
+                <option value="">Select Category</option>
+                @foreach ($categories as $category)
+                  <option value="{{ $category['id'] }}">{{ $category['name_category'] }}</option>
+                @endforeach
+              </select>
+              @error('category_id')
                   <div class="invalid-feedback">
                       {{ $message }}
                   </div>
-            @enderror
+              @enderror
+            </div>
           </div>
-          <div class="mb-3">
-            <label for="image" class="form-label">Image</label>
-            <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image">
-            @error('image')
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="alamat" class="form-label">Alamat</label>
+              <input type="text" class="form-control @error('alamat') is-invalid @enderror" id="alamat" name="alamat">
+              @error('alamat')
                   <div class="invalid-feedback">
                       {{ $message }}
                   </div>
-            @enderror
+              @enderror
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="image" class="form-label">Image</label>
+              <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image">
+              @error('image')
+                  <div class="invalid-feedback">
+                      {{ $message }}
+                  </div>
+              @enderror
+            </div>
           </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="negara" class="form-label">Negara</label>
+              <input type="text" class="form-control" id="negara">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="kota" class="form-label">Kota</label>
+              <input type="text" class="form-control" id="kota">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="kecamatan" class="form-label">Kecamatan</label>
+              <input type="text" class="form-control" id="kecamatan">
+            </div>
+            {{-- <div class="col-md-6 mb-3">
+              <label for="street" class="form-label">Jalan</label>
+              <input type="text" class="form-control" id="street">
+            </div> --}}
+          </div>
+          <button type="button" class="btn btn-primary" id="searchLocationBtn">Cari Lokasi</button>
+
+          <div class="row">
+            <div class="col-md-6 mb-3 mt-4">
+              <label for="longitude" class="form-label">Longitude</label>
+              <input type="text" class="form-control" id="longitude" required readonly>
+            </div>
+            <div class="col-md-6 mb-3 mt-4">
+              <label for="latitude" class="form-label">Latitude</label>
+              <input type="text" class="form-control" id="latitude" required readonly>
+            </div>
+          </div>
+          <div id="map" style="height: 400px;"></div>
         </form>
       </div>
       <div class="modal-footer">
@@ -108,6 +145,8 @@
     </div>
   </div>
 </div>
+
+
 
 {{-- Edit Property Modal --}}
 <div class="modal fade" id="editPropertyModal" tabindex="-1" aria-labelledby="editPropertyModalLabel" aria-hidden="true">
@@ -164,14 +203,87 @@ $.ajaxSetup({
 
   $(document).ready(function() {
     var table = $('#example').DataTable();
-
+    var map;
     $('#propertyModal').on('shown.bs.modal', function () {
+
+        map = L.map('map').setView([-6.1751, 106.8650], 13); 
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© Mrxnunu'
+        }).addTo(map);
+
+        var marker;
+
+        map.on('click', function(e) {
+            if (marker) {
+                map.removeLayer(marker);
+            }
+            marker = L.marker(e.latlng).addTo(map);
+            $('#latitude').val(e.latlng.lat); 
+            $('#longitude').val(e.latlng.lng); 
+        });
+
         $('#category_id').select2({
             theme: "bootstrap-5",
             width: '100%',
             placeholder: $( this ).data( 'placeholder' ), 
             dropdownParent: $('#propertyModal') 
         });
+
+        $('#searchLocationBtn').on('click', function() {
+        var negara = $('#negara').val();
+        var kota = $('#kota').val();
+        var kecamatan = $('#kecamatan').val();
+        // var street = $('#street').val();
+
+        var address = `${kecamatan}, ${kota}, ${negara}`;
+        
+        // Lakukan request ke Nominatim
+        $.ajax({
+            url: 'https://nominatim.openstreetmap.org/search',
+            data: {
+                q: address,
+                format: 'json',
+                addressdetails: 1
+            },
+            success: function(data) {
+                if (data.length > 0) {
+                    var location = data[0];
+                    var lat = location.lat;
+                    var lon = location.lon;
+
+                    map.setView([lat, lon], 13);
+
+                    if (marker) {
+                        map.removeLayer(marker);
+                    }
+                    
+                    // Tambahkan marker di lokasi yang ditemukan
+                    marker = L.marker([lat, lon]).addTo(map);
+                    $('#latitude').val(lat);
+                    $('#longitude').val(lon);
+                } else {
+                  
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lokasi Tidak Ditemukan',
+                        text: 'Silakan periksa kembali input Anda.',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Terjadi kesalahan saat mencari lokasi. Silakan coba lagi.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+
     });
 
     // select2 edit modal
@@ -186,72 +298,77 @@ $.ajaxSetup({
     });
 
      $('#savePropertyBtn').on('click', function() {
-   var formData = new FormData();
-   formData.append('name_property', $('#name_property').val());
-   formData.append('category_id', $('#category_id').val());
-   formData.append('alamat', $('#alamat').val());
-   formData.append('image', $('#image')[0].files[0]);  
+        var formData = new FormData();
+        formData.append('name_property', $('#name_property').val());
+        formData.append('category_id', $('#category_id').val());
+        formData.append('alamat', $('#alamat').val());
+        formData.append('latitude', $('#latitude').val());
+        formData.append('longitude', $('#longitude').val());
+        formData.append('negara', $('#negara').val());
+        formData.append('kota', $('#kota').val());
+        formData.append('kecamatan', $('#kecamatan').val());
+        formData.append('image', $('#image')[0].files[0]);  
 
-   $.ajax({
-       url: '{{ route("property.store") }}',
-       type: 'POST',
-       _token: '{{ csrf_token() }}',
-       data: formData,
-       processData: false,
-       contentType: false,
-       success: function(response) {
-           console.log("Response from API:", response);
-           if (response.success) {
-               table.row.add([
-                   response.property.name_property,
-                   response.property.slug,
-                   response.property.category.name_category,
-                   '<img src="' + response.property.image + '" alt="Property Image" style="width: 100px;">',
-                   '<a href="javascript:void(0)" class="btn btn-warning btn-sm me-2" onclick="editCategory(' + response.property.id + ')">Edit</a>' +
-                   '<button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(' + response.property.id + ')">Delete</button>'
-               ]).draw();
+        $.ajax({
+            url: '{{ route("property.store") }}',
+            type: 'POST',
+            _token: '{{ csrf_token() }}',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                // console.log("Response from API:", response);
+                if (response.success) {
+                    table.row.add([
+                        response.property.name_property,
+                        response.property.slug,
+                        response.property.category.name_category,
+                        '<img src="' + response.property.image + '" alt="Property Image" style="width: 100px;">',
+                        '<a href="javascript:void(0)" class="btn btn-warning btn-sm me-2" onclick="editCategory(' + response.property.id + ')">Edit</a>' +
+                        '<button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(' + response.property.id + ')">Delete</button>'
+                    ]).draw();
 
-               Swal.fire({
-                   icon: 'success',
-                   title: 'Success!',
-                   text: 'Property has been added successfully.',
-                   confirmButtonText: 'OK'
-               });
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Property has been added successfully.',
+                        confirmButtonText: 'OK'
+                    });
 
-               $('#propertyModal').modal('hide');
-               $('#propertyForm')[0].reset();
-               setTimeout(function() {
-                   location.reload();
-               }, 1000);
-           } else {
-               Swal.fire({
-                   icon: 'error',
-                   title: 'Oops...',
-                   text: response.message || 'Something went wrong. Please try again!',
-                   confirmButtonText: 'OK'
-               });
-           }
-       },
-       error: function(xhr, status, error) {
-           console.error(xhr.responseText);
+                    $('#propertyModal').modal('hide');
+                    $('#propertyForm')[0].reset();
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: response.message || 'Something went wrong. Please try again!',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
 
-           if (xhr.status === 422) {
-               var errors = xhr.responseJSON.errors;
-               $.each(errors, function(field, messages) {
-                   $('#' + field).addClass('is-invalid'); // Add the 'is-invalid' class for the field
-                   $('#' + field).next('.invalid-feedback').text(messages[0]); // Display error message
-               });
-           } else {
-               Swal.fire({
-                   icon: 'error',
-                   title: 'Error!',
-                   text: 'Failed to add property. Please try again later.',
-                   confirmButtonText: 'OK'
-               });
-           }
-       }
-   });
-});
+                if (xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    $.each(errors, function(field, messages) {
+                        $('#' + field).addClass('is-invalid'); // Add the 'is-invalid' class for the field
+                        $('#' + field).next('.invalid-feedback').text(messages[0]); // Display error message
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Failed to add property. Please try again later.',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            }
+        });
+        });
 
   });
 

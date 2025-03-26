@@ -77,6 +77,12 @@ class PropertyController extends Controller
             'alamat' => 'required|string',
             'category_id' => 'required|integer',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'negara' => 'required|string',
+            'kota' => 'required|string',
+            'kecamatan' => 'required|string',
+            'latitude' => 'required|string',
+            'longitude' => 'required|string',
+
         ]);
 
         $token = session('token');
@@ -87,6 +93,11 @@ class PropertyController extends Controller
             ->post($url, [
                 'name_property' => $validated['name_property'],
                 'alamat' => $validated['alamat'],
+                'negara' => $validated['negara'],
+                'kota' => $validated['kota'],
+                'kecamatan' => $validated['kecamatan'],
+                'latitude' => $validated['latitude'],
+                'longitude' => $validated['longitude'],
                 'category_id' => $validated['category_id'],
             ]);
         Log::info('API Response:', $response->json());
