@@ -42,5 +42,45 @@
     </div>
   </div>
 </div>
+{{-- @section('scripts')
+    <script>
+  function fetchNotifications() {
+    $.ajax({
+      url: '{{ route("notifications.fetch") }}', 
+      type: 'GET',
+      success: function (res) {
+        
+        $('#notif-count').text(res.count);
+
+        let html = '';
+        res.dataorder.forEach(order => {
+          html += `
+          <div>
+            <a class="dropdown-item border-bottom py-2" href="javascript:;">
+              <div class="d-flex align-items-center gap-3">
+                <div class="user-wrapper bg-primary text-primary bg-opacity-10">
+                  <span>${order.owner_property.substring(0, 2).toUpperCase()}</span>
+                </div>
+                <div>
+                  <h5 class="notify-title">${order.owner_property} - Order</h5>
+                  <p class="mb-0 notify-desc">${order.kode_pemesanan} - ${order.status}</p>
+                  <p class="mb-0 notify-time">${order.waktu_pemesanan_human}</p>
+                </div>
+                <div class="notify-close position-absolute end-0 me-3">
+                  <i class="material-icons-outlined fs-6">close</i>
+                </div>
+              </div>
+            </a>
+          </div>`;
+        });
+        $('#notif-list').html(html);
+      }
+    });
+  }
+
+  setInterval(fetchNotifications, 10000); // 10 detik
+</script>
+
+@endsection --}}
 
 @endsection

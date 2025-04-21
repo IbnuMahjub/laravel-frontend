@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Events\OrderNotification;
 use Illuminate\Support\Facades\Http;
 
 class DashboardController extends Controller
@@ -20,6 +21,11 @@ class DashboardController extends Controller
 
     public function index()
     {
+        $token = session('token');
+        $url = env('API_URL') . '/api/countOrder';
+        $response = Http::withToken($token)->get($url);
+        $data = $response->json();
+        // dd($response->json());       
 
         $breadcrumbs = [
             ['title' => 'Dashboard', 'url' => route('dashboard')],
@@ -28,8 +34,9 @@ class DashboardController extends Controller
         $this->generateBreadcrumb($breadcrumbs, $breadcrumbsTitle = 'Dashboard');
         return view('dashboard.index', [
             'title' => 'Dashboard',
-            'active' => 'dashboard'
-
+            'active' => 'dashboard',
+            // 'orders' => $data['dataorder'],
+            // 'orderCount' => $data['count'],
         ]);
     }
 
@@ -77,6 +84,40 @@ class DashboardController extends Controller
             'image.required' => 'Image is harus diisi',
             'image.array' => 'Image harus berupa array',
             'image.min' => 'Image harus memiliki minimal 3 gambar',
+        ]);
+    }
+
+    public function fetchNotifications()
+    {
+        $token = session('token');
+        $url = env('API_URL') . '/api/countOrder';
+        $response = Http::withToken($token)->get($url);
+        $data = $response->json();
+
+        // Ubah waktu jadi "x minutes ago"
+        foreach ($data['dataorder'] as &$order) {
+            $order['waktu_pemesanan_human'] = \Carbon\Carbon::parse($order['waktu_pemesanan'])->diffForHumans();
+        }
+
+        return response()->json($data);
+    }
+
+    public function sendNotif()
+    {
+        broadcast(new OrderNotification("Notifikasi dari sistem!"));
+
+        return response()->json(['message' => 'Broadcast sent']);
+    }
+
+    public function socket()
+    {
+        $breadcrumbs = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'Analysis', 'url' => 'javascript:;', 'active' => true],
+        ];
+        $this->generateBreadcrumb($breadcrumbs, $breadcrumbsTitle = 'Dashboard');
+        return view('dashboard.socket', [
+            'title' => 'Dashboard',
         ]);
     }
 }
