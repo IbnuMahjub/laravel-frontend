@@ -70,6 +70,7 @@ Route::get('/invoice/{kode_pemesanan}', [OrderController::class, 'get_invoice'])
 
 Route::get('/test', [DashboardController::class, 'test'])->name('test');
 Route::post('/test', [DashboardController::class, 'storeTest']);
+Route::get('/socket', [DashboardController::class, 'socket']);
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('check.token');
 Route::get('/profile', [ProfileController::class, 'profile'])->name('profile')->middleware('check.token');
@@ -93,3 +94,6 @@ Route::delete('/unit/{id}', [PropertyController::class, 'destroyUnit'])->name('u
 
 
 Route::get('/dataorderan', [DataOrderController::class, 'index'])->middleware('check.token');
+
+Route::get('/fetch-notifications', [DashboardController::class, 'fetchNotifications'])->name('notifications.fetch');
+// Route::get('/broadcast-test', [DashboardController::class, 'sendNotif']);

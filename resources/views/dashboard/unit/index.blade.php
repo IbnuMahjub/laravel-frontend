@@ -45,6 +45,10 @@
 
 @section('scripts')
 <script>
+  $(document).ready(function () {
+        $('#example').DataTable();
+  });
+
     @if(session('success'))
         Swal.fire({
           icon: 'success',

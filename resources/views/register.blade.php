@@ -38,6 +38,15 @@
                  <form class="row g-3" action="{{ route('register.storeRegister') }}" method="POST">
                   @csrf
                    <div class="col-12">
+                     <label for="inputNameAddress" class="form-label @error('name') is-invalid @enderror">Name</label>
+                     <input type="name" class="form-control " id="inputNameAddress" placeholder="Enter your name" name="name" value="{{ old('name') }}">
+                     @error('name')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                    @enderror
+                   </div>
+                   <div class="col-12">
                      <label for="inputEmailAddress" class="form-label @error('email') is-invalid @enderror">Email</label>
                      <input type="email" class="form-control " id="inputEmailAddress" placeholder="jhon@example.com" name="email" value="{{ old('email') }}">
                      @error('email')

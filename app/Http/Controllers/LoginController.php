@@ -20,7 +20,7 @@ class LoginController extends Controller
     public function authenticate(Request $request)
     {
         $validated = $request->validate([
-            'email' => 'required|string',
+            'email' => 'required|email:dns',
             'password' => 'required|string',
         ]);
 
@@ -42,6 +42,7 @@ class LoginController extends Controller
 
                 Session::put('token', $data['token']);
                 Session::put('user', $data['user']);
+                Session::put('login_time', now());
 
                 return redirect('/dashboard');
             }
@@ -89,11 +90,25 @@ class LoginController extends Controller
 
     public function logout()
     {
-        Session::forget('token');
-        Session::forget('user');
+        $token = session('token');
+        $url = env('API_URL') . '/api/logout';
 
-        Session::flush();
-        return redirect()->route('login');
+        try {
+            $response = Http::withToken($token)->post($url);
+            if ($response->successful()) {
+                Session::forget('token');
+                Session::forget('user');
+
+                Session::flush();
+                return redirect()->route('login');
+            }
+        } catch (\Exception $e) {
+            Session::forget('token');
+            Session::forget('user');
+
+            Session::flush();
+            return redirect()->route('login');
+        }
     }
 
     public function register()
