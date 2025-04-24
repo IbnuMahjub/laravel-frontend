@@ -38,7 +38,7 @@
              <img src="assets/images/gallery/welcome-back-3.png" height="180" alt="">
           </div>
         </div>
-      </div><!--end row-->
+      </div>
     </div>
   </div>
 </div>

@@ -42,29 +42,7 @@
   <!-- Link JS untuk Routing Machine -->
   <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
 
-  <style>
-    .running-text {
-      white-space: nowrap;
-      overflow: hidden;
-      display: block;
-    }
-
-    .running-text span {
-      display: inline-block;
-      padding-left: 100%;
-      animation: runningText 10s linear infinite;
-    }
-
-    @keyframes runningText {
-      from {
-        transform: translateX(100%);
-      }
-      to {
-        transform: translateX(-100%);
-      }
-    }
-
-  </style>
+  <link rel="stylesheet" href="assets/css/my.css">
 
 </head>
 
