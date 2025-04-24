@@ -30,7 +30,7 @@
         <div class="col-12 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
           <div class="card rounded-4 mb-0 border-top border-4 border-primary border-gradient-1">
             <div class="card-body p-5">
-               <img src="assets/images/logo1.png" class="mb-4 img-fluid" width="145" alt="Logo">
+               {{-- <img src="assets/images/logo1.png" class="mb-4 img-fluid" width="145" alt="Logo"> --}}
                <h4 class="fw-bold">Get Started Now</h4>
                <p class="mb-0">Enter your credentials to login your account</p>
 
@@ -92,4 +92,26 @@
   <!--end banner-->
 
 </div>
+@section('scripts')
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          const togglePassword = document.querySelector('#show_hide_password a');
+          const passwordInput = document.querySelector('#show_hide_password input');
+          const icon = document.querySelector('#show_hide_password i');
+
+          togglePassword.addEventListener('click', function (e) {
+              e.preventDefault();
+              if (passwordInput.type === "password") {
+                  passwordInput.type = "text";
+                  icon.classList.remove("bi-eye-slash-fill");
+                  icon.classList.add("bi-eye-fill");
+              } else {
+                  passwordInput.type = "password";
+                  icon.classList.remove("bi-eye-fill");
+                  icon.classList.add("bi-eye-slash-fill");
+              }
+          });
+      });
+    </script>
+@endsection
 @endsection
