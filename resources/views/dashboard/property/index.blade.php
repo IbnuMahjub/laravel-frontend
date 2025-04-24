@@ -118,10 +118,6 @@
               <label for="kecamatan" class="form-label">Kecamatan</label>
               <input type="text" class="form-control" id="kecamatan">
             </div>
-            {{-- <div class="col-md-6 mb-3">
-              <label for="street" class="form-label">Jalan</label>
-              <input type="text" class="form-control" id="street">
-            </div> --}}
           </div>
           <button type="button" class="btn btn-primary" id="searchLocationBtn">Cari Lokasi</button>
 
@@ -147,10 +143,9 @@
 </div>
 
 
-
 {{-- Edit Property Modal --}}
 <div class="modal fade" id="editPropertyModal" tabindex="-1" aria-labelledby="editPropertyModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="editPropertyModalLabel">Edit Property</h5>
@@ -161,26 +156,66 @@
           @csrf
           @method('PUT')
           <input type="hidden" id="edit_property_id" name="id">
-          <div class="mb-3">
-            <label for="edit_name_property" class="form-label">Name Property</label>
-            <input type="text" class="form-control" id="edit_name_property" name="name_property">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="edit_name_property" class="form-label">Name Property</label>
+              <input type="text" class="form-control" id="edit_name_property" name="name_property">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="edit_category_id" class="form-label">Category</label>
+              <select class="form-control" id="edit_category_id" name="category_id">
+                <option value="">Select Category</option>
+                @foreach ($categories as $category)
+                  <option value="{{ $category['id'] }}">{{ $category['name_category'] }}</option>
+                @endforeach
+              </select>
+            </div>
           </div>
-          <div class="mb-3">
-            <label for="edit_category_id" class="form-label">Category</label>
-            <select class="form-control" id="edit_category_id" name="category_id">
-              @foreach ($categories as $category)
-                <option value="{{ $category['id'] }}">{{ $category['name_category'] }}</option>
-              @endforeach
-            </select>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="edit_alamat" class="form-label">Alamat</label>
+              <input type="text" class="form-control" id="edit_alamat" name="alamat">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="edit_image" class="form-label">Image</label>
+              <input type="file" class="form-control" id="edit_image" name="image">
+            </div>
           </div>
-          <div class="mb-3">
-            <label for="edit_alamat" class="form-label">Alamat</label>
-            <input type="text" class="form-control" id="edit_alamat" name="alamat">
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="edit_negara" class="form-label">Negara</label>
+              <input type="text" class="form-control" id="edit_negara" name="negara">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="edit_kota" class="form-label">Kota</label>
+              <input type="text" class="form-control" id="edit_kota" name="kota">
+            </div>
           </div>
-          <div class="mb-3">
-            <label for="edit_image" class="form-label">Image</label>
-            <input type="file" class="form-control" id="edit_image" name="image">
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="edit_kecamatan" class="form-label">Kecamatan</label>
+              <input type="text" class="form-control" id="edit_kecamatan" name="kecamatan">
+            </div>
           </div>
+
+          <button type="button" class="btn btn-primary" id="editSearchLocationBtn">Cari Lokasi</button>
+
+          <div class="row">
+            <div class="col-md-6 mb-3 mt-4">
+              <label for="edit_longitude" class="form-label">Longitude</label>
+              <input type="text" class="form-control" id="edit_longitude" name="longitude" readonly required>
+            </div>
+            <div class="col-md-6 mb-3 mt-4">
+              <label for="edit_latitude" class="form-label">Latitude</label>
+              <input type="text" class="form-control" id="edit_latitude" name="latitude" readonly required>
+            </div>
+          </div>
+
+          <div id="edit_map" style="height: 400px;"></div>
+
         </form>
       </div>
       <div class="modal-footer">
@@ -190,6 +225,7 @@
     </div>
   </div>
 </div>
+
 
 
 
@@ -287,15 +323,98 @@ $.ajaxSetup({
     });
 
     // select2 edit modal
-    $('#editPropertyModal').on('shown.bs.modal', function () {
-        $('#edit_category_id').select2({
-            theme: "bootstrap-5",
-            width: '100%',
-            placeholder: "Choose...",
-            allowClear: true,
-            dropdownParent: $('#editPropertyModal') 
-        });
-    });
+      let editMap;
+      let editMarker;
+
+      $('#editPropertyModal').on('shown.bs.modal', function () {
+          // Inisialisasi map jika belum ada
+          if (!editMap) {
+              editMap = L.map('edit_map').setView([-6.1751, 106.8650], 13);
+              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                  maxZoom: 19,
+                  attribution: '© OpenStreetMap contributors'
+              }).addTo(editMap);
+
+              editMap.on('click', function (e) {
+                  if (editMarker) {
+                      editMap.removeLayer(editMarker);
+                  }
+                  editMarker = L.marker(e.latlng).addTo(editMap);
+                  $('#edit_latitude').val(e.latlng.lat);
+                  $('#edit_longitude').val(e.latlng.lng);
+              });
+          }
+
+          // Set posisi marker dan map berdasarkan data existing
+          let lat = $('#edit_latitude').val();
+          let lng = $('#edit_longitude').val();
+          if (lat && lng) {
+              editMap.setView([lat, lng], 13);
+              if (editMarker) {
+                  editMap.removeLayer(editMarker);
+              }
+              editMarker = L.marker([lat, lng]).addTo(editMap);
+          }
+
+          $('#edit_category_id').select2({
+              theme: "bootstrap-5",
+              width: '100%',
+              placeholder: "Choose...",
+              allowClear: true,
+              dropdownParent: $('#editPropertyModal')
+          });
+
+          $('#editSearchLocationBtn').on('click', function () {
+              var negara = $('#edit_negara').val();
+              var kota = $('#edit_kota').val();
+              var kecamatan = $('#edit_kecamatan').val();
+
+              var address = `${kecamatan}, ${kota}, ${negara}`;
+
+              $.ajax({
+                  url: 'https://nominatim.openstreetmap.org/search',
+                  data: {
+                      q: address,
+                      format: 'json',
+                      addressdetails: 1
+                  },
+                  success: function (data) {
+                      if (data.length > 0) {
+                          var location = data[0];
+                          var lat = location.lat;
+                          var lon = location.lon;
+
+                          editMap.setView([lat, lon], 13);
+
+                          if (editMarker) {
+                              editMap.removeLayer(editMarker);
+                          }
+
+                          editMarker = L.marker([lat, lon]).addTo(editMap);
+                          $('#edit_latitude').val(lat);
+                          $('#edit_longitude').val(lon);
+                      } else {
+                          Swal.fire({
+                              icon: 'error',
+                              title: 'Lokasi Tidak Ditemukan',
+                              text: 'Silakan periksa kembali input Anda.',
+                              confirmButtonText: 'OK'
+                          });
+                      }
+                  },
+                  error: function () {
+                      Swal.fire({
+                          icon: 'error',
+                          title: 'Error',
+                          text: 'Terjadi kesalahan saat mencari lokasi. Silakan coba lagi.',
+                          confirmButtonText: 'OK'
+                      });
+                  }
+              });
+          });
+
+      });
+
 
      $('#savePropertyBtn').on('click', function() {
         var formData = new FormData();
@@ -355,8 +474,8 @@ $.ajaxSetup({
                 if (xhr.status === 422) {
                     var errors = xhr.responseJSON.errors;
                     $.each(errors, function(field, messages) {
-                        $('#' + field).addClass('is-invalid'); // Add the 'is-invalid' class for the field
-                        $('#' + field).next('.invalid-feedback').text(messages[0]); // Display error message
+                        $('#' + field).addClass('is-invalid'); 
+                        $('#' + field).next('.invalid-feedback').text(messages[0]); 
                     });
                 } else {
                     Swal.fire({
@@ -374,151 +493,170 @@ $.ajaxSetup({
 
   // fungsi edit dan update
   function editProperty(id) {
-    $.ajax({
-        url: '{{ url("property") }}/' + id + '/edit',
-        type: 'GET',
-        success: function(response) {
-            if (response.success) {
-                $('#edit_property_id').val(response.property.id);
-                $('#edit_name_property').val(response.property.name_property);
-                $('#edit_category_id').val(response.property.category.id);
-                $('#edit_alamat').val(response.property.alamat);
-                $('#editPropertyModal').modal('show');
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: response.message || 'Failed to fetch property data',
-                    confirmButtonText: 'OK'
-                });
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'Failed to fetch property data. Please try again later.',
-                confirmButtonText: 'OK'
-            });
-        }
-    });
-}
+      $.ajax({
+          url: '{{ url("property") }}/' + id + '/edit',
+          type: 'GET',
+          success: function(response) {
+              console.log("Response from API:", response);
+              if (response.success) {
+                  $('#edit_property_id').val(response.property.id);
+                  $('#edit_name_property').val(response.property.name_property);
+                  $('#edit_category_id').val(response.property.category.id);
+                  $('#edit_alamat').val(response.property.alamat);
+                  $('#edit_negara').val(response.property.negara || '');
+                  $('#edit_kota').val(response.property.kota || '');
+                  $('#edit_kecamatan').val(response.property.kecamatan || '');
+                  $('#edit_latitude').val(response.property.latitude || '');
+                  $('#edit_longitude').val(response.property.longitude || '');
 
-$('#updatePropertyBtn').on('click', function() {
-    var id = $('#edit_property_id').val();
-    var formData = new FormData();
-    var imageFile = $('#edit_image')[0].files[0];
+                  if (response.property.image) {
+                      $('#edit_image').after(`
+                          <div id="currentImagePreview" class="mt-2">
+                              <img src="${response.property.image}" alt="Current Image" style="width: 100px;">
+                          </div>
+                      `);
+                  }
+                  $('#editPropertyModal').modal('show');
+              } else {
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Oops...',
+                      text: response.message || 'Failed to fetch property data',
+                      confirmButtonText: 'OK'
+                  });
+              }
+          },
+          error: function(xhr, status, error) {
+              console.error(xhr.responseText);
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Error!',
+                  text: 'Failed to fetch property data. Please try again later.',
+                  confirmButtonText: 'OK'
+              });
+          }
+      });
+  }
 
-    if (imageFile) {
-        formData.append('image', imageFile);
-    } else {
-        console.log('No image file selected.');
-    }
+  $('#updatePropertyBtn').on('click', function() {
+      var id = $('#edit_property_id').val();
+      var formData = new FormData();
+      var imageFile = $('#edit_image')[0].files[0];
 
-    formData.append('name_property', $('#edit_name_property').val());
-    formData.append('category_id', $('#edit_category_id').val());
-    formData.append('alamat', $('#edit_alamat').val());
-    formData.append('_method', 'PUT');
+      if (imageFile) {
+          formData.append('image', imageFile);
+      } else {
+          console.log('No image file selected.');
+      }
 
-    $.ajax({
-        url: '{{ url("property") }}/' + id,
-        type: 'POST',
-        _token: '{{ csrf_token() }}',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            console.log("Response from API:", response);
-            if (response.success) {
-                var row = $('#property-' + id);
-                row.find('td:eq(0)').text(response.property.name_property); 
-                row.find('td:eq(1)').text(response.property.slug); 
-                row.find('td:eq(2)').text(response.property.category.name_category); 
-                row.find('td:eq(3)').html('<img src="' + response.property.image + '" alt="Property Image" style="width: 100px;">'); // Image
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: 'Property has been updated successfully.',
-                    confirmButtonText: 'OK'
-                });
+      formData.append('name_property', $('#edit_name_property').val());
+      formData.append('category_id', $('#edit_category_id').val());
+      formData.append('alamat', $('#edit_alamat').val());
+      formData.append('negara', $('#edit_negara').val());
+      formData.append('kota', $('#edit_kota').val());
+      formData.append('kecamatan', $('#edit_kecamatan').val());
+      formData.append('latitude', $('#edit_latitude').val());
+      formData.append('longitude', $('#edit_longitude').val());    
+      formData.append('_method', 'PUT');
 
-                // Hide the edit modal
-                $('#editPropertyModal').modal('hide');
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: response.message || 'Failed to update property',
-                    confirmButtonText: 'OK'
-                });
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'Failed to update property. Please try again later.',
-                confirmButtonText: 'OK'
-            });
-        }
-    });
-});
+      $.ajax({
+          url: '{{ url("property") }}/' + id,
+          type: 'POST',
+          _token: '{{ csrf_token() }}',
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(response) {
+              console.log("Response from API:", response);
+              if (response.success) {
+                  var row = $('#property-' + id);
+                  row.find('td:eq(0)').text(response.property.name_property); 
+                  row.find('td:eq(1)').text(response.property.slug); 
+                  row.find('td:eq(2)').text(response.property.category.name_category); 
+                  row.find('td:eq(3)').html('<img src="' + response.property.image + '" alt="Property Image" style="width: 100px;">'); // Image
+                  
+                  Swal.fire({
+                      icon: 'success',
+                      title: 'Success!',
+                      text: 'Property has been updated successfully.',
+                      confirmButtonText: 'OK'
+                  });
 
-function confirmDelete(id) {
-    Swal.fire({
-        title: 'Are you sure?',
-        text: 'You won\'t be able to revert this!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, delete it!',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            deleteProperty(id);
-        }
-    });
-}
+                  // Hide the edit modal
+                  $('#editPropertyModal').modal('hide');
+              } else {
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Oops...',
+                      text: response.message || 'Failed to update property',
+                      confirmButtonText: 'OK'
+                  });
+              }
+          },
+          error: function(xhr, status, error) {
+              console.error(xhr.responseText);
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Error!',
+                  text: 'Failed to update property. Please try again later.',
+                  confirmButtonText: 'OK'
+              });
+          }
+      });
+  });
 
-function deleteProperty(id) {
-    $.ajax({
-        url: '{{ url("property") }}/' + id,
-        type: 'DELETE',
-        data: {
-            _token: '{{ csrf_token() }}',  
-        },
-        success: function(response) {
-            console.log("Response from API:", response);
-            if (response.success) {
-                $('#property-' + id).remove();
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Deleted!',
-                    text: 'Property has been deleted successfully.',
-                    confirmButtonText: 'OK'
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: response.message || 'Failed to delete property.',
-                    confirmButtonText: 'OK'
-                });
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'Failed to delete property. Please try again later.',
-                confirmButtonText: 'OK'
-            });
-        }
-    });
-}
+  function confirmDelete(id) {
+      Swal.fire({
+          title: 'Are you sure?',
+          text: 'You won\'t be able to revert this!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, delete it!',
+          cancelButtonText: 'Cancel'
+      }).then((result) => {
+          if (result.isConfirmed) {
+              deleteProperty(id);
+          }
+      });
+  }
+
+  function deleteProperty(id) {
+      $.ajax({
+          url: '{{ url("property") }}/' + id,
+          type: 'DELETE',
+          data: {
+              _token: '{{ csrf_token() }}',  
+          },
+          success: function(response) {
+              console.log("Response from API:", response);
+              if (response.success) {
+                  $('#property-' + id).remove();
+                  Swal.fire({
+                      icon: 'success',
+                      title: 'Deleted!',
+                      text: 'Property has been deleted successfully.',
+                      confirmButtonText: 'OK'
+                  });
+              } else {
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Oops...',
+                      text: response.message || 'Failed to delete property.',
+                      confirmButtonText: 'OK'
+                  });
+              }
+          },
+          error: function(xhr, status, error) {
+              console.error(xhr.responseText);
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Error!',
+                  text: 'Failed to delete property. Please try again later.',
+                  confirmButtonText: 'OK'
+              });
+          }
+      });
+  }
 
 
 
