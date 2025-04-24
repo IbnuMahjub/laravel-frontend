@@ -4,7 +4,7 @@
       <img src="{{ asset('vertical/assets/images/logo-icon.png') }}" class="logo-img" alt="">
     </a>
     <a href="/" class="logo-name flex-grow-1">
-      <h5 class="mb-0">Maxton</h5>
+      <h5 class="mb-0">Property</h5>
     </a>
     <div class="sidebar-close">
       <span class="material-icons-outlined">close</span>
