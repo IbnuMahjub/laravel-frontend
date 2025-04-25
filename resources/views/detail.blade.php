@@ -28,6 +28,10 @@
           <div class="card shadow-lg border-0">
             <div class="card-body">
               <div id="map" style="height: 400px;" class="rounded"></div>
+              <button id="showRouteBtn" class="btn btn-success mt-3 w-100">
+                Lihat Rute dari Lokasi Anda
+              </button>
+
             </div>
           </div>
         </div>
@@ -99,6 +103,7 @@
   </section>
 </div>
 
+
 @section('scripts')
 <script>
   function changeImage(unitId, imgUrl) {
@@ -107,6 +112,7 @@
       mainImg.src = imgUrl;
     }
   }
+
   document.addEventListener("DOMContentLoaded", function () {
     @if(session('success'))
       Swal.fire({
@@ -138,24 +144,60 @@
           let start = new Date(checkin);
           let end = new Date(checkout);
           let diff = (end - start) / (1000 * 3600 * 24);
-
           jumlahHariInput.value = diff > 0 ? diff : '';
           if (diff <= 0) alert("Tanggal check-out harus lebih besar dari check-in!");
         }
       });
     });
 
-    // Map Leaflet
-    var map = L.map('map').setView([{{ $data['latitude'] }}, {{ $data['longitude'] }}], 15);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-    }).addTo(map);
+    // Map Leaflet init
+    const propertyLat = {{ $data['latitude'] }};
+    const propertyLng = {{ $data['longitude'] }};
 
-    L.marker([{{ $data['latitude'] }}, {{ $data['longitude'] }}])
+    const map = L.map('map').setView([propertyLat, propertyLng], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+
+    L.marker([propertyLat, propertyLng])
       .addTo(map)
       .bindPopup("<b>{{ $data['name_property'] }}</b><br>{{ $data['kota'] }}, {{ $data['negara'] }}")
       .openPopup();
+
+    // Event klik tombol untuk lihat rute
+    document.getElementById('showRouteBtn').addEventListener('click', function () {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+          const userLat = position.coords.latitude;
+          const userLng = position.coords.longitude;
+
+          // Tambahkan rute dari lokasi pengguna ke properti
+          L.Routing.control({
+            waypoints: [
+              L.latLng(userLat, userLng),
+              L.latLng(propertyLat, propertyLng)
+            ],
+            routeWhileDragging: false,
+            show: false,
+            addWaypoints: false,
+            lineOptions: {
+              styles: [{ color: 'green', opacity: 0.8, weight: 6 }]
+            }
+          }).addTo(map);
+
+          L.marker([userLat, userLng])
+            .addTo(map)
+            .bindPopup("Lokasi Anda")
+            .openPopup();
+        }, function (error) {
+          console.error("Gagal mengambil lokasi pengguna:", error);
+          alert("Gagal mengambil lokasi Anda. Pastikan izin lokasi diaktifkan.");
+        });
+      } else {
+        alert("Geolocation tidak didukung oleh browser Anda.");
+      }
+    });
   });
 </script>
 @endsection
+
+
 @endsection
