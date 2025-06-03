@@ -57,6 +57,11 @@
           <div class="mb-3">
             <label for="name_category" class="form-label">Name</label>
             <input type="text" class="form-control" id="name_category" name="name_category">
+            @error('name_category')
+                <div class="invalid-feedback">
+                    {{ $message }}
+                </div>
+            @enderror
           </div>
         </form>
       </div>
@@ -84,7 +89,13 @@
 
           <div class="mb-3">
             <label for="edit_name" class="form-label">Name</label>
-            <input type="text" class="form-control" id="edit_name_category" name="name_category">
+            <input type="text" class="form-control @error('name_category') is-invalid @enderror" id="name_category" name="name_category">
+            @error('name_category')
+                <div class="invalid-feedback">
+                    {{ $message }}
+                </div>
+            @enderror
+
           </div>
 
           <div class="modal-footer">
@@ -102,42 +113,93 @@
   $(document).ready(function() {
     var table = $('#example').DataTable();
 
-    $('#saveCategoryBtn').on('click', function() {
-      var name_category = $('#name_category').val();
+    // $('#saveCategoryBtn').on('click', function() {
+    //   var name_category = $('#name_category').val();
 
-      $.ajax({
+    //   $.ajax({
+    //     url: '{{ route("category.store") }}',
+    //     type: 'POST',
+    //     data: {
+    //       _token: '{{ csrf_token() }}',
+    //       name_category: name_category
+    //     },
+    //     success: function(response) {
+    //       if (response.success) {
+    //         table.row.add([
+    //           response.category.name_category,  
+    //           response.category.slug, 
+    //           '<a href="javascript:void(0)" class="btn btn-warning btn-sm me-2" onclick="editCategory(' + response.category.id + ')">Edit</a>' +
+    //           '<button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(' + response.category.id + ')">Delete</button>'
+    //         ]).draw();  
+
+    //         Swal.fire({
+    //             icon: 'success',
+    //             title: 'Success!',
+    //             text: 'Category has been added successfully.',
+    //             confirmButtonText: 'OK'
+    //         });
+
+    //         $('#categoryModal').modal('hide');
+    //         $('#categoryForm')[0].reset();
+    //       } else {
+    //         Swal.fire({
+    //             icon: 'error',
+    //             title: 'Oops...',
+    //             text: 'Something went wrong. Please try again!',
+    //             confirmButtonText: 'OK'
+    //         }); 
+    //       }
+    //     },
+    //     error: function(xhr, status, error) {
+    //         console.error(xhr.responseText);
+    //         Swal.fire({
+    //             icon: 'error',
+    //             title: 'Error!',
+    //             text: 'Failed to add category. Please try again later.',
+    //             confirmButtonText: 'OK'
+    //         });
+    //     }
+    //   });
+    // });
+
+    $('#saveCategoryBtn').on('click', function() {
+    var name_category = $('#name_category').val();
+
+    $.ajax({
         url: '{{ route("category.store") }}',
         type: 'POST',
         data: {
-          _token: '{{ csrf_token() }}',
-          name_category: name_category
+            _token: '{{ csrf_token() }}',
+            name_category: name_category
         },
         success: function(response) {
-          if (response.success) {
-            table.row.add([
-              response.category.name_category,  
-              response.category.slug, 
-              '<a href="javascript:void(0)" class="btn btn-warning btn-sm me-2" onclick="editCategory(' + response.category.id + ')">Edit</a>' +
-              '<button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(' + response.category.id + ')">Delete</button>'
-            ]).draw();  
+            if (response.success) {
+                // Tambah kategori ke table dan reset form
+                table.row.add([
+                    response.category.name_category,  
+                    response.category.slug, 
+                    '<a href="javascript:void(0)" class="btn btn-warning btn-sm me-2" onclick="editCategory(' + response.category.id + ')">Edit</a>' +
+                    '<button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(' + response.category.id + ')">Delete</button>'
+                ]).draw();  
 
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: 'Category has been added successfully.',
-                confirmButtonText: 'OK'
-            });
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Category has been added successfully.',
+                    confirmButtonText: 'OK'
+                });
 
-            $('#categoryModal').modal('hide');
-            $('#categoryForm')[0].reset();
-          } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Something went wrong. Please try again!',
-                confirmButtonText: 'OK'
-            }); 
-          }
+                $('#categoryModal').modal('hide');
+                $('#categoryForm')[0].reset();
+            } else {
+                // Handle validation error messages
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: response.message,
+                    confirmButtonText: 'OK'
+                });
+            }
         },
         error: function(xhr, status, error) {
             console.error(xhr.responseText);
@@ -148,8 +210,9 @@
                 confirmButtonText: 'OK'
             });
         }
-      });
     });
+});
+
 
     // Edit Category
     window.editCategory = function(id) {

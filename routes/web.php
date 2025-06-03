@@ -71,6 +71,7 @@ Route::get('/invoice/{kode_pemesanan}', [OrderController::class, 'get_invoice'])
 Route::get('/test', [DashboardController::class, 'test'])->name('test');
 Route::post('/test', [DashboardController::class, 'storeTest']);
 Route::get('/socket', [DashboardController::class, 'socket']);
+Route::get('/chat', [DashboardController::class, 'chat']);
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('check.token');
 Route::get('/profile', [ProfileController::class, 'profile'])->name('profile')->middleware('check.token');

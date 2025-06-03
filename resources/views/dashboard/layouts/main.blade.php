@@ -431,7 +431,7 @@
       e.orders.forEach(order => {
         const notifItem = document.createElement('div');
         notifItem.innerHTML = `
-          <a class="dropdown-item border-bottom py-2" href="javascript:;">
+          <a class="dropdown-item border-bottom py-2" href="javascript:;
             <div class="d-flex align-items-center gap-3">
               <div class="user-wrapper bg-primary text-primary bg-opacity-10">
                 <span>${order.username.charAt(0).toUpperCase()}</span>

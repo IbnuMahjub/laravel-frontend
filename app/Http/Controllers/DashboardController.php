@@ -120,4 +120,110 @@ class DashboardController extends Controller
             'title' => 'Dashboard',
         ]);
     }
+
+
+    // public function chat()
+    // {
+    //     $token = session('token');
+
+    //     $listChat = env('API_URL') . '/api/daftar_user';
+    //     // $lastChat = env('API_URL') . '/api/lastChat';
+    //     // dd($url);
+    //     $response = Http::withToken($token)->get($listChat);
+    //     $data = $response->json();
+    //     dd($data);
+
+    //     $breadcrumbs = [
+    //         ['title' => 'Dashboard', 'url' => route('dashboard')],
+    //         ['title' => 'Analysis', 'url' => 'javascript:;', 'active' => true],
+    //     ];
+    //     $this->generateBreadcrumb($breadcrumbs, $breadcrumbsTitle = 'Dashboard');
+    //     return view('chat', [
+    //         'title' => 'Dashboard',
+    //         'active' => 'dashboard',
+    //         'chats' => $data['data'],
+    //         // 'orders' => $data['dataorder'],
+    //         // 'orderCount' => $data['count'],
+    //     ]);
+    // }
+
+    // public function chat()
+    // {
+    //     $token = session('token');
+
+    //     // Ambil daftar user
+    //     $listChatUrl = env('API_URL') . '/api/daftar_user';
+    //     $response = Http::withToken($token)->get($listChatUrl);
+    //     $data = $response->json();
+    //     $userList = $data['data'];
+    //     // dd($userList);
+
+    //     // Ambil id semua user buat query ke last_chat
+    //     $targetIds = collect($userList)->pluck('id')->toArray();
+    //     $queryString = http_build_query(['target_ids' => $targetIds]);
+
+    //     $lastChatUrl = env('API_URL') . '/api/last_chat?' . $queryString;
+    //     $lastChatResponse = Http::withToken($token)->get($lastChatUrl);
+    //     $lastChatData = $lastChatResponse->json()['data'];
+
+    //     // Map last_chat ke user list
+    //     $userList = collect($userList)->map(function ($user) use ($lastChatData) {
+    //         $lastChat = collect($lastChatData)->firstWhere('target_id', $user['id']);
+    //         $user['last_chat'] = $lastChat['last_chat'] ?? null;
+    //         return $user;
+    //     });
+
+    //     // Breadcrumbs
+    //     $breadcrumbs = [
+    //         ['title' => 'Dashboard', 'url' => route('dashboard')],
+    //         ['title' => 'Analysis', 'url' => 'javascript:;', 'active' => true],
+    //     ];
+    //     $this->generateBreadcrumb($breadcrumbs, $breadcrumbsTitle = 'Dashboard');
+
+    //     // Kirim ke view
+    //     return view('chat', [
+    //         'title'  => 'Dashboard',
+    //         'active' => 'dashboard',
+    //         'chats'  => $userList,
+    //     ]);
+    // }
+
+    public function chat()
+    {
+        $token = session('token');
+
+        // Ambil daftar user
+        $listChatUrl = env('API_URL') . '/api/daftar_user';
+        $response = Http::withToken($token)->get($listChatUrl);
+        $data = $response->json();
+        $userList = $data['data'];
+
+        // Ambil id semua user buat query ke last_chat
+        $targetIds = collect($userList)->pluck('id')->toArray();
+        $queryString = http_build_query(['target_ids' => $targetIds]);
+
+        $lastChatUrl = env('API_URL') . '/api/last_chat?' . $queryString;
+        $lastChatResponse = Http::withToken($token)->get($lastChatUrl);
+        $lastChatData = $lastChatResponse->json()['data'];
+
+        // Map last_chat ke user list
+        $userList = collect($userList)->map(function ($user) use ($lastChatData) {
+            $lastChat = collect($lastChatData)->firstWhere('target_id', $user['id']);
+            $user['last_chat'] = $lastChat['last_chat'] ?? null;
+            return $user;
+        });
+        // dd($userList);
+
+        $breadcrumbs = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'Chat', 'url' => 'javascript:;', 'active' => true],
+        ];
+        $this->generateBreadcrumb($breadcrumbs, 'Chat');
+
+        return view('chat', [
+            'title'  => 'Chat',
+            'active' => 'chat',
+            'chats'  => $userList,
+        ]);
+    }
 }

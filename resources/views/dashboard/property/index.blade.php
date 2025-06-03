@@ -231,6 +231,7 @@
 
 @section('scripts')
 <script>
+  let properties = {!! json_encode($properties) !!}
 $.ajaxSetup({
     headers: {
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -436,12 +437,13 @@ $.ajaxSetup({
             processData: false,
             contentType: false,
             success: function(response) {
-                // console.log("Response from API:", response);
+                console.log("Response from API:", response);
                 if (response.success) {
                     table.row.add([
                         response.property.name_property,
                         response.property.slug,
-                        response.property.category.name_category,
+                        response.property.data_category.name_category,
+                        // response.property.category.name_category,
                         '<img src="' + response.property.image + '" alt="Property Image" style="width: 100px;">',
                         '<a href="javascript:void(0)" class="btn btn-warning btn-sm me-2" onclick="editCategory(' + response.property.id + ')">Edit</a>' +
                         '<button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(' + response.property.id + ')">Delete</button>'
@@ -450,8 +452,10 @@ $.ajaxSetup({
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',
-                        text: 'Property has been added successfully.',
-                        confirmButtonText: 'OK'
+                        text: response.pesan,
+                        // confirmButtonText: 'OK'
+                        showConfirmButton: false,
+                        timer: 1500
                     });
 
                     $('#propertyModal').modal('hide');
@@ -501,7 +505,8 @@ $.ajaxSetup({
               if (response.success) {
                   $('#edit_property_id').val(response.property.id);
                   $('#edit_name_property').val(response.property.name_property);
-                  $('#edit_category_id').val(response.property.category.id);
+                  // $('#edit_category_id').val(response.property.category.id);
+                  $('#edit_category_id').val(response.property.data_category.id);
                   $('#edit_alamat').val(response.property.alamat);
                   $('#edit_negara').val(response.property.negara || '');
                   $('#edit_kota').val(response.property.kota || '');
@@ -572,7 +577,8 @@ $.ajaxSetup({
                   var row = $('#property-' + id);
                   row.find('td:eq(0)').text(response.property.name_property); 
                   row.find('td:eq(1)').text(response.property.slug); 
-                  row.find('td:eq(2)').text(response.property.category.name_category); 
+                  row.find('td:eq(2)').text(response.property.data_category.name_category); 
+                  // row.find('td:eq(2)').text(response.property.category.name_category); 
                   row.find('td:eq(3)').html('<img src="' + response.property.image + '" alt="Property Image" style="width: 100px;">'); // Image
                   
                   Swal.fire({

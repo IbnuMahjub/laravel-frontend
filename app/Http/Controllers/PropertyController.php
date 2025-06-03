@@ -70,6 +70,17 @@ class PropertyController extends Controller
     }
 
 
+    private function postPropertyData($url, $validated, $request)
+    {
+        $requestObj = Http::withToken(session('token'));
+
+        if ($request->hasFile('image')) {
+            return $requestObj->attach('image', fopen($request->file('image')->getRealPath(), 'r'), $request->file('image')->getClientOriginalName())
+                ->post($url, $validated);
+        }
+
+        return $requestObj->post($url, $validated);
+    }
     public function storeProperty(Request $request)
     {
         $validated = $request->validate([
@@ -88,25 +99,15 @@ class PropertyController extends Controller
         $token = session('token');
         $url = env('API_URL') . '/api/property';
 
-        $response = Http::withToken($token)
-            ->attach('image', fopen($request->file('image')->getRealPath(), 'r'), $request->file('image')->getClientOriginalName())
-            ->post($url, [
-                'name_property' => $validated['name_property'],
-                'alamat' => $validated['alamat'],
-                'negara' => $validated['negara'],
-                'kota' => $validated['kota'],
-                'kecamatan' => $validated['kecamatan'],
-                'latitude' => $validated['latitude'],
-                'longitude' => $validated['longitude'],
-                'category_id' => $validated['category_id'],
-            ]);
-        Log::info('API Response:', $response->json());
+        $response = $this->postPropertyData($url, $validated, $request);
+        // Log::info('API Response:', $response->json());
 
         if ($response->successful()) {
             Log::info('API Response Successful', $response->json()['data']);
             return response()->json([
                 'success' => true,
                 'property' => $response->json()['data'],
+                'pesan' => $response->json()['message'],
             ]);
         } else {
             return response()->json([
